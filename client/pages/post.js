@@ -4,7 +4,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 
-const defaultUserPic="https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
+const defaultUserPic = "https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
 
 function post() {
     
@@ -13,7 +13,7 @@ function post() {
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
 
-    try{var reader = new window.FileReader()} catch{}
+    try {var reader = new window.FileReader()} catch{}
   
     function sendPost(){
         const data = {title: title, description: description}

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
 .appNameContainer{
     height: 70px;
     background-color: #440A67;
@@ -9,4 +11,6 @@
 
 .appName{
     color: white;
+    font-family: 'Pacifico', cursive;
+    display: inline;
 }
