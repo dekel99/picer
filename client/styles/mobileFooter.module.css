@@ -1,0 +1,11 @@
+.mobileFooter{
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+  }
+  
+  @media (min-aspect-ratio: 1/1), (min-width: 800px) {
+    .mobileFooter{
+        display: none;
+    }
+  }

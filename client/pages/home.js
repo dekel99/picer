@@ -8,9 +8,9 @@ import axios from "axios"
 
 function home() {
 
-    function vote(){
-        axios.get("http://localhost:4000").then(res => {console.log(res)})
-    }
+    // function vote(){
+    //     axios.get("http://localhost:4000").then(res => {console.log(res)})
+    // }
 
     return (
         <div className={styles.homeContainer}>
@@ -24,7 +24,7 @@ function home() {
             <br/>
 
             <Link href="/vote">
-                <a onClick={vote}>
+                <a>
                     <Card><HowToVoteIcon style={{ fontSize: 200 }}/><p>Vote on others</p></Card>
                 </a>
             </Link>

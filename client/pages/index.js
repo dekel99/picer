@@ -4,10 +4,12 @@ import Redirect from "../components/Redirect"
 
 export default function Main() {
 
-  const [isAuth, setIsAuth] = useState(true)
+  const [isAuth, setIsAuth] = useState(false)
   
   if (isAuth){
-    return <Redirect to="/home" />
+    return <Redirect to="/vote" />
   }
-  return <Redirect to="/login" />
+  return(
+    <h1>this is the web page of the app</h1>
+  )
 }

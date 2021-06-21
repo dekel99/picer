@@ -4,15 +4,17 @@ import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 
+const defaultUserPic="https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
 
 function post() {
     
     const [title, setTitle] = useState()
     const [description, setDescription] = useState()
     const [image1, setImage1] = useState()
-    // var reader = new FileReader();
+    const [image2, setImage2] = useState()
 
-
+    try{var reader = new window.FileReader()} catch{}
+  
     function sendPost(){
         const data = {title: title, description: description}
 
@@ -31,7 +33,7 @@ function post() {
             }
 
             reader.onload = function (e) {
-              setImage1(reader.result)
+                image1 ? setImage2(reader.result) : setImage1(reader.result)
             }
         }     
     }
@@ -40,15 +42,25 @@ function post() {
     return (
         <div>
             <div className={styles.uploadsContainer}>
-                <div className={styles.picUploadSecondary}></div>
-                <div className={styles.picUpload}>
+                <div className={styles.picUploadSecondary} style={image1 && {backgroundColor: 'white'} }>
+                    {image1 ? image2 ?
+                    <div className={styles.imgPreview} style={{backgroundImage: 'url(' + image2 + ')'}}/>:
                     <div className={styles.addIcon}>
-                        {image1 ? <div style={{backgroundImage: 'url(' + image1 + ')'}}></div> : <div>
-                            <input hidden id="imageUpload" type='file' accept=".png, .jpg, .jpeg" onChange={fileChange}/>
-                            <label for="imageUpload"><AddIcon style={{ fontSize: 100 }} /></label>
-                        </div>}
-                    </div>
+                        <input hidden id="imageUpload" type='file' accept=".png, .jpg, .jpeg" onChange={fileChange}/>
+                        <label for="imageUpload"><AddIcon style={{ fontSize: 100 }} /></label> 
+                    </div>: null}
                 </div>
+
+                <div className={styles.picUpload}>
+                    {image1 ? 
+                    <div className={styles.imgPreview} style={{backgroundImage: 'url(' + image1 + ')'}}/> : 
+
+                    <div className={styles.addIcon}>
+                        <input hidden id="imageUpload" type='file' accept=".png, .jpg, .jpeg" onChange={fileChange}/>
+                        <label for="imageUpload"><AddIcon style={{ fontSize: 100 }} /></label>
+                    </div>}
+                </div>
+
             </div>
             <br/>
             

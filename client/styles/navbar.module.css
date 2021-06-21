@@ -1,5 +1,5 @@
 .navbar{
-    position: absolute;
+    position: relative;
     top: 0px;
     height: 50px;
 }
@@ -12,9 +12,14 @@
 }
 
 .profileBtn{
-    position: fixed;
+    position: absolute;
     right: 20px;
     top: 15px;
     transform: scale(1.8);
 }
 
+@media (max-aspect-ratio: 1/1), (max-width: 800px) {
+    .navbar{
+        display: none;
+    }
+  }
