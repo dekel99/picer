@@ -20,7 +20,7 @@ function Layout({ children }) {
     return(
         <div>
             <Header />
-            <Main />
+            <main>{children}</main>         
         </div>
     )
 }
