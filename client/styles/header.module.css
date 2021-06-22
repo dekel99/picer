@@ -2,7 +2,7 @@
 
 .appNameContainer{
     height: 70px;
-    background-color: #440A67;
+    background-color: #512B58;
     top: 0;
     position: absolute;
     width: 100%;
@@ -10,7 +10,7 @@
 }
 
 .appName{
-    color: white;
+    color: #F9F9F9;
     font-family: 'Pacifico', cursive;
     display: inline;
 }
