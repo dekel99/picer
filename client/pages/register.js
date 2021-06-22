@@ -12,16 +12,16 @@ function register() {
             </Head>
             <h1>Register</h1>
             <form>
-                <TextField id="outlined-basic" type="text" label="Full Name" variant="outlined" />
+                <TextField id="outlined-basic-name" type="text" label="Full Name" variant="outlined" />
                 <br/>
                 <br/>
-                <TextField id="outlined-basic" type="email" label="Email" variant="outlined" />
+                <TextField id="outlined-basic-email" type="email" label="Email" variant="outlined" />
                 <br/>
                 <br/>
-                <TextField id="outlined-basic" type="password" label="Password" variant="outlined" />
+                <TextField id="outlined-basic-password" type="password" label="Password" variant="outlined" />
                 <br/>
                 <br/>
-                <TextField id="outlined-basic" type="password" label="Confirm Password" variant="outlined" />
+                <TextField id="outlined-basic-confirm" type="password" label="Confirm Password" variant="outlined" />
                 <br/>
                 <br/>
                 <Button variant="outlined" color="primary">Register</Button>

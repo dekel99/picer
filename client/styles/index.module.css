@@ -1,6 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap');
+
 .app-name-container{
   height: 100px;
   position: fixed;
   background-color: #440A67;
   top: 100px
+}
+
+.appMainHeader{
+  font-family: 'Oswald', sans-serif;
+}
+
+.appSecondHeader{
+  font-family: 'Oswald', sans-serif, "Extra-light 200";
 }

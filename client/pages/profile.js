@@ -1,6 +1,7 @@
 import React from 'react'
 import { TextField } from '@material-ui/core';
 import Link from "next/link"
+import { Button } from '@material-ui/core';
 
 function profile() {
 
@@ -13,20 +14,20 @@ function profile() {
         <div>
             <h1>profile</h1>
             <label>Full name</label>
-            <TextField id="outlined-basic" type="text" label="Full name" variant="outlined" />
+            <TextField id="outlined-basic-name" type="text" label="Full name" variant="outlined" />
             <br/>
             <br/>
             <label>Email</label>
-            <TextField id="outlined-basic" type="text" label="Email" variant="outlined" />
+            <TextField id="outlined-basic-email" type="text" label="Email" variant="outlined" />
             <br/>
             <br/>
             <Link href="/change-password">
-                <a>Change Password</a>
+                <a><Button variant="outlined" color="primary">Change Password</Button></a>
             </Link>
             <br/>
             <br/>
             <Link href="/">
-                <a onClick={logout}>Logout</a>
+                <a><Button onClick={logout} variant="outlined" color="primary">Logout</Button></a>
             </Link>
         </div>
     )

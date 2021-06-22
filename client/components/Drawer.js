@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -21,6 +22,17 @@ const useStyles = makeStyles({
 });
 
 export default function TemporaryDrawer() {
+
+  const [isAuth, setIsAuth] = useState(false)
+
+  useEffect(() => {
+    if(localStorage.getItem("auth")==="true"){
+    setIsAuth(true)
+    } else {
+    setIsAuth(false)
+    }
+}, [])
+
   const classes = useStyles();
   const [state, setState] = React.useState({
     right: false
@@ -43,6 +55,7 @@ export default function TemporaryDrawer() {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
+
     <List>
 
     <Link href="/login">
@@ -62,6 +75,7 @@ export default function TemporaryDrawer() {
     </Link>
 
     </List>
+    
 
     <Divider />
 
