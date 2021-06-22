@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 
 export default function MobileFooter() {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(3);
   const router = useRouter()
 
 

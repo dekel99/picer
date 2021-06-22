@@ -9,8 +9,40 @@
     margin: auto;
 }
 
+.drawerContainer{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.btnsContainer{
+    display: none;
+}   
+
 .appName{
     color: #F9F9F9;
     font-family: 'Pacifico', cursive;
     display: inline;
+}
+
+@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+    .drawerContainer{
+        display: none;
+    }
+
+    .logBtn{
+        display: inline-block;
+        margin-right: 12px;
+    }
+    
+    .regBtn{
+        display: inline-block;
+    }
+
+    .btnsContainer{
+        display: block;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }   
 }
