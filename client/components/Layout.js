@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './Header'
 import MobileFooter from './MobileFooter'
-import Navbar from './navbar'
-import Main from "../pages/index"
 
 function Layout({ children }) {
-    const [isAuth, setIsAuth] = useState(true)
+    const [isAuth, setIsAuth] = useState(false)
+
+    useEffect(() => {
+        if(localStorage.getItem("auth")==="true"){
+          setIsAuth(true)
+        } else {
+          setIsAuth(false)
+        }
+    }, [])
 
     if (isAuth){
         return (
             <div>
-                <Navbar/>
                 <Header />
                 <main>{children}</main>         
                 <MobileFooter />

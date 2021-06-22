@@ -2,9 +2,18 @@ import React from 'react'
 import Head from 'next/head'
 import { TextField, Button } from '@material-ui/core';
 import Link from "next/link"
+import {useRouter} from 'next/router'
+
 
 
 function login() {
+    const router = useRouter()
+
+    function login(){
+        localStorage.setItem("auth", "true")
+        window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL + "/") 
+    }
+
     return (
         <div>
             <Head>
@@ -18,9 +27,9 @@ function login() {
                 <TextField id="outlined-basic" type="password" label="Password" variant="outlined" />
                 <br/>
                 <br/>
-                <Button variant="outlined" color="primary">Login</Button>
+                <Button onClick={login} variant="outlined" color="primary">Login</Button>
                 <br/>
-                <p>dont have an acount yet? <Link href="/register"><a className="register-link">Register</a></Link></p>
+                <p>dont have an acount yet? <Link href="/register"><a>Register</a></Link></p>
             </form>
         </div>
     )
