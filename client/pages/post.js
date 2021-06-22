@@ -5,6 +5,7 @@ import { TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 
 const defaultUserPic = "https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
+let fileName = ""
 
 function post() {
     
@@ -12,15 +13,10 @@ function post() {
     const [description, setDescription] = useState()
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
-
+    
     try {var reader = new window.FileReader()} catch{}
-  
-    function sendPost(){
-        const data = {title: title, description: description}
-
-        axios.post(process.env.NEXT_PUBLIC_SERVER_URL + "/post", data).then(res=> { console.log(res)}).catch(err => {console.log(err)})
-    }
-
+    
+    
     // Update img file in client when pick img from device **
     function fileChange(e){
 
@@ -34,9 +30,23 @@ function post() {
 
             reader.onload = function (e) {
                 image1 ? setImage2(reader.result) : setImage1(reader.result)
+                sendPost(fileVar)
             }
         }     
     }
+
+
+    function sendPost(fileVar){
+        const data = new FormData()
+        data.append("name", fileName)
+        data.append("file", fileVar)
+
+        // const data = {title: title, description: description}
+        // const pics = {image1: image1, image2: image2}
+
+        axios.post(process.env.NEXT_PUBLIC_SERVER_URL + "/post", data).then(res=> { console.log(res)}).catch(err => {console.log(err)})
+    }
+
 
 
     return (

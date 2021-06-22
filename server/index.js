@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
 const cors = require ("cors")
+const multer = require('multer')
 require("dotenv").config()
 
 const app = express();
@@ -17,15 +18,32 @@ app.use(bodyParser.json());
 //     next()
 // })
 
+// Multer storage config **
+const storage = multer.diskStorage({
+  destination: function(request, file, callback){ // Define file destenation 
+    callback(null, "./public/uploads")
+  },
+  filename: function(request, file, callback){ // Define file name
+    callback(null, Date.now() + file.originalname)
+  }
+})
+
+// Upload config **
+const upload = multer({
+  storage: storage,
+  limit:{
+    fieldSize: 1024*1024*3
+  }
+})
+
 //*********************************************** */
 
 app.get("/", function(req, res){
     res.send("this is respond")
 })
 
-app.post("/post", function(req, res){
-    console.log(req.body)
-    res.send("this is respond")
+app.post("/post", upload.single("file"), function(req, res){
+    console.log(req.body.file[0])
 })
 
 
