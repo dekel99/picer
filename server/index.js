@@ -99,7 +99,7 @@ app.post("/post-upload", upload.array("file"), function(req, res){
           image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
       }    
     })
-    setTimeout(function(){res.send("OK")},2000)
+    setTimeout(function(){res.send("ok")},2000)
 
 })
 

@@ -3,6 +3,8 @@ import styles from "../styles/post.module.css"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import axios from 'axios';
+import {useRouter} from 'next/router'
+
 
 
 const defaultUserPic = "https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
@@ -17,6 +19,8 @@ function post() {
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
+
     
     try {var reader = new window.FileReader()} catch{}
     
@@ -56,7 +60,10 @@ function post() {
 
         axios.post(process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", data)
             .then(res=> { 
+                if (res.data==="ok"){
                     setLoading(false)
+                    router.push("/vote")
+                }
             }).catch(err => {
                 console.log(err) 
                 setLoading(false)
