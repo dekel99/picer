@@ -4,6 +4,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 import {useRouter} from 'next/router'
+import Loading from '../components/Loading';
 
 
 
@@ -74,12 +75,8 @@ function post() {
 
     return (
         <div>
-            {loading && 
-            <div className={styles.pageContainerLoading}>
-                <div className={styles.loading}>
-                    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_Stt1R6.json"  background="transparent"  speed="1"  style={{width: "50px", height: "50px"}}  loop  autoplay></lottie-player>
-                </div>
-            </div>}
+
+            <Loading loading={loading}/>
 
             <div className={styles.uploadsContainer}>
                 <div className={styles.picUploadSecondary} style={image1 && {backgroundColor: 'white'} }>
@@ -100,7 +97,6 @@ function post() {
                         <label htmlFor="imageUpload"><AddIcon style={{ fontSize: 100 }} /></label>
                     </div>}
                 </div>
-
             </div>
             <br/>
             
