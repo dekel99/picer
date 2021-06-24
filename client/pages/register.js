@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Button } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import Link from "next/link"
+import styles from "../styles/register.module.css"
 
 function register() {
     return (
@@ -24,9 +25,9 @@ function register() {
                 <TextField id="outlined-basic-confirm" type="password" label="Confirm Password" variant="outlined" />
                 <br/>
                 <br/>
-                <Button variant="outlined" color="primary">Register</Button>
+                <Button style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Register</Button>
                 <br/>
-                <p>already have an acount? <Link href="/login"><a className="login-link">Login</a></Link></p>
+                <p>Already Have An Acount? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
             </form>
         </div>
     )

@@ -9,6 +9,7 @@ const app = express();
 app.use(cors({ origin: "*", credentials: true})) // Enable getting requests from client
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
+
 var postList = [{
   username: "dekel", 
   title: "this is title", 
