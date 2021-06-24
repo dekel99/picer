@@ -6,10 +6,6 @@ import axios from 'axios';
 import {useRouter} from 'next/router'
 import Loading from '../components/Loading';
 
-
-
-const defaultUserPic = "https://www.biiainsurance.com/wp-content/uploads/2015/05/no-image.jpg"
-let fileName = ""
 var formFile1 = ""
 var formFile2 = ""
 

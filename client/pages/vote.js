@@ -15,7 +15,7 @@ function vote() {
 
     return (
         <div>
-            {postList && postList.map((post, index) => {
+            {postList && postList.slice(0).reverse().map((post, index) => {
                 return(
                     <PostCard 
                         key={index}
