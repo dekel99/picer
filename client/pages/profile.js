@@ -22,12 +22,12 @@ function profile() {
             <br/>
             <br/>
             <Link href="/change-password">
-                <a><Button variant="outlined" color="primary">Change Password</Button></a>
+                <a><Button style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Change Password</Button></a>
             </Link>
             <br/>
             <br/>
             <Link href="/">
-                <a><Button onClick={logout} variant="outlined" color="primary">Logout</Button></a>
+                <a><Button style={{color: "#512B58", borderRadius: "8px"}} onClick={logout} variant="outlined" color="primary">Logout</Button></a>
             </Link>
         </div>
     )

@@ -67,7 +67,7 @@ function Header() {
                         <Link href="/register">
                             <a>
                                 <div className={styles.logBtn}>
-                                    <Button size="small" variant="outlined" style={{color: "white", borderColor: "white"}} >Register</Button>
+                                    <Button size="small" variant="outlined" style={{color: "white", borderColor: "white", borderRadius: "8px"}} >Register</Button>
                                 </div>
                             </a>
                         </Link>
@@ -75,7 +75,7 @@ function Header() {
                         <Link href="/login">
                             <a>
                                 <div className={styles.regBtn}>
-                                    <Button size="small" variant="outlined" style={{color: "white", borderColor: "white"}} >Login</Button>
+                                    <Button size="small" variant="outlined" style={{color: "white", borderColor: "white", borderRadius: "8px"}} >Login</Button>
                                 </div>    
                             </a>
                         </Link>

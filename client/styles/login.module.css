@@ -1,0 +1,7 @@
+.registerButton{
+    color: #93329E;
+}
+
+.registerButton:hover {
+    color: #512B58;
+}
