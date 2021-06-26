@@ -2,12 +2,20 @@ import React from 'react'
 import { TextField } from '@material-ui/core';
 import Link from "next/link"
 import { Button } from '@material-ui/core';
+import axios from 'axios';
+import {useRouter} from 'next/router'
 
 function profile() {
+    const router = useRouter()
 
     function logout(){
-        localStorage.setItem("auth", "false")
-        window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL + "/") 
+        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/logout", withCredentials: true})
+            .then(res => {
+                if (res.data==="logout"){
+                    // router.push("/")
+                    window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+                }
+            })
     }
 
     return (

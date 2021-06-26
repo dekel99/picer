@@ -11,18 +11,18 @@ const multer = require('multer')
 require("dotenv").config()
 
 const app = express();
-app.use(cors({ origin: "*", credentials: true})) // Enable getting requests from client
+app.use(cors({ origin: process.env.REACT_APP_FRONT_URL, credentials: true})) // Enable getting requests from client
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
   
 // CORS header config **
 
 // app.use((req, res, next) => {
-  //     res.setHeader("Access-Control-Allow-Origin", "*")
-  //     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-  //     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
-  //     next()
-  // })
+//       res.setHeader("Access-Control-Allow-Origin", procces.env,REACT_APP_FRONT_URL + "/register")
+//       res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+//       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
+//       next()
+//   })
     
 
 const storage = multer.diskStorage({
@@ -47,7 +47,7 @@ const upload = multer({
 app.use(session({
   secret: "Our little secret.",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: true
 }))
 
 app.use(passport.initialize())
@@ -61,18 +61,18 @@ mongoose.connect( process.env.MONGO_URL, {
 })
 mongoose.set("useCreateIndex", true)
 
+userSchema = new mongoose.Schema ({
+  email: String,
+  password: String
+  // posts: postSchema
+})
+
 postSchema = new mongoose.Schema({
   username: String,
   title: String,
   description: String,
   images: Object,
   time: String
-})
-
-userSchema = new mongoose.Schema ({
-  email: String,
-  password: String,
-  posts: postSchema
 })
 
 userSchema.plugin(passportLocalMongoose)
@@ -141,6 +141,20 @@ app.get("/posts", function(req, res){
   })
 })
 
+app.get("/check-auth", function(req, res){
+  console.log(req.isAuthenticated())
+  if(req.isAuthenticated()){
+    res.send(true)
+  } else {
+    res.send(false)
+  }
+})
+
+app.get("/logout", function(req, res){
+  req.logout()
+  res.send("logout")
+})
+
 app.get("/public/uploads/:picId", function(req, res){
   const picId = req.params.picId
   res.sendFile(__dirname + "/public/uploads/" + picId)
@@ -149,28 +163,38 @@ app.get("/public/uploads/:picId", function(req, res){
 //------------------------------------POST ROUTS---------------------------------------
 
 app.post("/register", function(req, res){
-  const { email, password, name } = req.body
-  const username = email
+  const {  password, name, username } = req.body
+
+  console.log(req.body)
 
   User.register({username: username}, password, function(err, user){
     if (err){
-      res.send(err)
+      console.log(err)
     } else {
       passport.authenticate("local")(req, res, function() {
-        User.findOneAndUpdate({username: username}, {name: name}, err => { // Insert default pic to database on every new user
-          if (err){
-            console.log(err)
-          } else {
-            res.send("ok")
-          }
-        })
+        res.send("ok") 
       })
     }
   })
 })
 
 app.post("/login", function(req, res){
-  console.log(req.body)
+  const { username , password } = req.body
+
+  const user = new User({
+    username: username,
+    password: password
+  })
+
+  req.login(user,function(err){
+    if(err){
+      console.log(err)
+    } else {
+      passport.authenticate("local")(req, res, function() {
+        res.send("ok")
+      })
+    }
+  })
 })
 
 app.post("/post-upload", upload.array("file"), function(req, res){
