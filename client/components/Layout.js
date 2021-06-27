@@ -15,7 +15,7 @@ function Layout({ children }) {
     if (isAuth){
         return (
             <div>
-                <Header />
+                <Header isAuth={isAuth}/>
                 <main>{children}</main>         
                 <MobileFooter />
             </div>
@@ -23,7 +23,7 @@ function Layout({ children }) {
     }
     return(
         <div>
-            <Header />
+            <Header isAuth={isAuth}/>
             <main>{children}</main>         
         </div>
     )

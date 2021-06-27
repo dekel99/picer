@@ -19,7 +19,7 @@ function vote() {
                 return(
                     <PostCard 
                         key={index}
-                        username={post.username} 
+                        name={post.name} 
                         title={post.title} 
                         images={post.images} 
                         description={post.description} 

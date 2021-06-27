@@ -61,18 +61,20 @@ mongoose.connect( process.env.MONGO_URL, {
 })
 mongoose.set("useCreateIndex", true)
 
-userSchema = new mongoose.Schema ({
-  email: String,
-  password: String
-  // posts: postSchema
-})
-
 postSchema = new mongoose.Schema({
-  username: String,
+  name: String,
   title: String,
   description: String,
   images: Object,
-  time: String
+  time: String,
+  postCreator: { type: mongoose.Schema.Types.ObjectId, ref: "User"}
+})
+
+userSchema = new mongoose.Schema ({
+  email: String,
+  password: String,
+  name: String,
+  userPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
 })
 
 userSchema.plugin(passportLocalMongoose)
@@ -100,7 +102,7 @@ passport.deserializeUser(function(id, done) {
 Post.find((err, picerDB) =>{
   if (picerDB.length==0){
     defaultPost1 = new Post({ 
-        username: "dekel", 
+        name: "dekel", 
         title: "this is title", 
         description: "this is very long description .................", 
         time: "12:00", 
@@ -112,7 +114,7 @@ Post.find((err, picerDB) =>{
   })
 
     defaultPost2 = new Post({
-    username: "nadav", 
+    name: "nadav", 
     title: "this is title", 
     description: "this is very long description .................", 
     time: "13:00", 
@@ -133,16 +135,15 @@ app.get("/", function(req, res){
     res.send("this is respond")
 })
 
-app.get("/posts", function(req, res){
-  Post.find((err, postList) =>{
-    if (!err){
-      res.send(postList)
-    }
-  })
+app.get("/posts", function(req, res){ 
+    Post.find((err, postList) =>{
+      if (!err){
+        res.send(postList)
+      }
+    })
 })
 
 app.get("/check-auth", function(req, res){
-  console.log(req.isAuthenticated())
   if(req.isAuthenticated()){
     res.send(true)
   } else {
@@ -155,6 +156,26 @@ app.get("/logout", function(req, res){
   res.send("logout")
 })
 
+app.get("/user-posts", function(req, res){
+  // if(req.isAuthenticated()){
+
+    User.
+    findOne({ username: 'e' }).
+    populate('userPosts').
+    exec(function (err, userWithPosts) {
+      if (err) return handleError(err);
+      res.send(userWithPosts.userPosts)
+      // console.log('The author is %s', story.author.name);
+      // prints "The author is Ian Fleming"
+    });
+
+  // User.find((err, foundUsers) => { 
+  //   res.send(foundUsers)
+  // })
+
+  // }
+})
+
 app.get("/public/uploads/:picId", function(req, res){
   const picId = req.params.picId
   res.sendFile(__dirname + "/public/uploads/" + picId)
@@ -165,14 +186,16 @@ app.get("/public/uploads/:picId", function(req, res){
 app.post("/register", function(req, res){
   const {  password, name, username } = req.body
 
-  console.log(req.body)
-
   User.register({username: username}, password, function(err, user){
     if (err){
       console.log(err)
     } else {
       passport.authenticate("local")(req, res, function() {
-        res.send("ok") 
+        User.findOneAndUpdate({username: username}, {name: name}, err => { 
+          if (!err){
+            res.send("ok") 
+          }
+        })
       })
     }
   })
@@ -199,28 +222,52 @@ app.post("/login", function(req, res){
 
 app.post("/post-upload", upload.array("file"), function(req, res){
     // req.files, req.body.title, req.body.description
+    if(req.isAuthenticated()){
+      const time = new Date().toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      
+      // Find users name and updates it with the post **
+      User.find({username: req.user.username}, (err, foundUser) => {
 
-    const time = new Date().toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+        if(!err){
+          post = new Post({
+            _id: new mongoose.Types.ObjectId(),
+            name: foundUser[0].name,
+            title: req.body.title, 
+            description: req.body.description,
+            time: time,
+            images: {
+              image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,
+              image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
+            },
+            postCreator: foundUser[0]._id
+          })
+  
+          post.save()
 
-    post = new Post({
-      username: "dekel",
-      title: req.body.title, 
-      description: req.body.description,
-      time: time,
-      images: {
-          image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,
-          image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
-      }
-    })
+          let postList = []
 
-    post.save()
+          if (foundUser[0].userPosts[0]){
+            foundUser[0].userPosts.map(post => {
+              postList.push(post._id)
+            })
+            console.log(postList)
+          }
+          postList.push(post._id)
 
-    setTimeout(function(){res.send("ok")},2000)
+          User.findOneAndUpdate({username: req.user.username}, {userPosts: postList.flat()}, err => { 
+            if (!err){
+              res.send("ok") 
+            }
+          })
+        }
+      })
+    } else {
+      res.send("auth failed")
+    }
 })
-
 
 
 //************************************************* */

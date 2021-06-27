@@ -21,7 +21,6 @@ function post() {
     
     try {var reader = new window.FileReader()} catch{}
     
-    
     // Update img file in client when pick img from device **
     function fileChange(e){
 
@@ -45,7 +44,6 @@ function post() {
         }     
     }
 
-
     function sendPost(){
         setLoading(true)
         const data = new FormData() 
@@ -55,19 +53,19 @@ function post() {
         data.append("title", title)
         data.append("description", description)
 
-        axios.post(process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", data)
-            .then(res=> { 
+        axios({method: "POST", url: process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", withCredentials: true , data: data})
+            .then(res=> {
                 if (res.data==="ok"){
                     setLoading(false)
                     router.push("/vote")
+                } else {
+                    //throw the user logged in error
                 }
             }).catch(err => {
                 console.log(err) 
                 setLoading(false)
             })
     }
-
-
 
     return (
         <div>

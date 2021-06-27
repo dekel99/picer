@@ -6,13 +6,13 @@ import styles from "../styles/postCard.module.css"
 
 function PostCard(props) {
 
-    const {username, images, title, description, time} = props
+    const {name, images, title, description, time} = props
     
     return (
         <div>
             <div className={styles.cardContainer}>
                 <Card>
-                    <p className={styles.username}>{username}</p>
+                    <p className={styles.username}>{name}</p>
 
                     <div className={styles.imagesContainer}>
                         <img className={styles.image1} src={images.image1}></img>
