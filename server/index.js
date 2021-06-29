@@ -67,6 +67,7 @@ postSchema = new mongoose.Schema({
   description: String,
   images: Object,
   time: String,
+  votes: Object,
   postCreator: { type: mongoose.Schema.Types.ObjectId, ref: "User"}
 })
 
@@ -132,15 +133,41 @@ Post.find((err, picerDB) =>{
 //------------------------------------GET ROUTS---------------------------------------
 
 app.get("/", function(req, res){
-    res.send("this is respond")
+  res.send("this is respond")
 })
 
-app.get("/posts", function(req, res){ 
-    Post.find((err, postList) =>{
-      if (!err){
-        res.send(postList)
-      }
-    })
+app.get("/posts", function(req, res){
+  Post.find((err, postList) =>{
+    if (!err){
+      res.send(postList)
+    }
+  })
+})
+
+app.get("/vote/:postId/:imgVoted", function(req, res){
+  const postId = req.params.postId
+  const imgVoted = req.params.imgVoted
+  let updatedVotes
+
+  if(req.isAuthenticated()){
+      Post.findById(postId, (err, post) => {
+      try{
+        if (imgVoted==="image1"){
+          updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
+        } else {
+          updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
+        }
+        
+        Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
+          if(!err){
+            res.send("ok")
+          }
+        })
+      } catch(err) {res.send(err)}
+    })  
+  } else {
+    res.send("Please log in and try again")
+  }
 })
 
 app.get("/check-auth", function(req, res){
@@ -157,23 +184,19 @@ app.get("/logout", function(req, res){
 })
 
 app.get("/user-posts", function(req, res){
-  // if(req.isAuthenticated()){
-
+  
+  if(req.isAuthenticated()){
     User.
-    findOne({ username: 'e' }).
+    findOne({ username: req.user.username }).
     populate('userPosts').
     exec(function (err, userWithPosts) {
       if (err) return handleError(err);
       res.send(userWithPosts.userPosts)
-      // console.log('The author is %s', story.author.name);
-      // prints "The author is Ian Fleming"
     });
-
-  // User.find((err, foundUsers) => { 
-  //   res.send(foundUsers)
-  // })
-
-  // }
+  } 
+  else {
+    res.send("auth fail")
+  }
 })
 
 app.get("/public/uploads/:picId", function(req, res){
@@ -222,6 +245,7 @@ app.post("/login", function(req, res){
 
 app.post("/post-upload", upload.array("file"), function(req, res){
     // req.files, req.body.title, req.body.description
+
     if(req.isAuthenticated()){
       const time = new Date().toLocaleTimeString("en-GB", {
         hour: "2-digit",
@@ -231,7 +255,7 @@ app.post("/post-upload", upload.array("file"), function(req, res){
       // Find users name and updates it with the post **
       User.find({username: req.user.username}, (err, foundUser) => {
 
-        if(!err){
+        try{
           post = new Post({
             _id: new mongoose.Types.ObjectId(),
             name: foundUser[0].name,
@@ -242,6 +266,7 @@ app.post("/post-upload", upload.array("file"), function(req, res){
               image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,
               image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
             },
+            votes: {image1: [], image2: []},
             postCreator: foundUser[0]._id
           })
   
@@ -253,7 +278,6 @@ app.post("/post-upload", upload.array("file"), function(req, res){
             foundUser[0].userPosts.map(post => {
               postList.push(post._id)
             })
-            console.log(postList)
           }
           postList.push(post._id)
 
@@ -262,10 +286,12 @@ app.post("/post-upload", upload.array("file"), function(req, res){
               res.send("ok") 
             }
           })
+        } catch {
+          res.send("Required fields are empty")
         }
       })
     } else {
-      res.send("auth failed")
+      res.send("Please login and try again")
     }
 })
 

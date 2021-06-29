@@ -7,23 +7,29 @@ function UserPosts() {
 
     const [loading, setLoading] = useState(false)
     const [userPosts, setUserPosts] = useState()
+    const [err, setErr] = useState()
 
     useEffect(() => {
         setLoading(true)
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/user-posts", withCredentials: true})
             .then(res => {
-                if (res.status===200){
+                if (res.data){
                     setUserPosts(res.data)
                     setLoading(false)
-                }
+                } else {
+                    throw Error ("You are not logged in or server couldn't fetch data")
+                } 
+            })
+            .catch(err => {
+                setLoading(false)
+                setErr(err.message)
             })
     }, [])
-    
 
-    return (
+    return(
         <div>
             <Loading loading={loading} />
-            <h1>your posts</h1>
+            { err ? <p>{err}</p> : <h1>your posts</h1> }
             {userPosts && userPosts.slice(0).reverse().map((post, index) => {
                 return(
                     <PostCard 
@@ -33,6 +39,7 @@ function UserPosts() {
                         images={post.images} 
                         description={post.description} 
                         time={post.time}
+                        votes={post.votes}
                     />
                 )
             })}

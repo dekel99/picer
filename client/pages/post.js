@@ -16,9 +16,9 @@ function post() {
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState()
     const router = useRouter()
 
-    
     try {var reader = new window.FileReader()} catch{}
     
     // Update img file in client when pick img from device **
@@ -59,10 +59,10 @@ function post() {
                     setLoading(false)
                     router.push("/vote")
                 } else {
-                    //throw the user logged in error
+                    throw Error (res.data)
                 }
             }).catch(err => {
-                console.log(err) 
+                setError(err.message)
                 setLoading(false)
             })
     }
@@ -104,6 +104,7 @@ function post() {
             </div>
             <br/>
             <Button onClick={sendPost} variant="outlined" color="primary">Post</Button>
+            {error && <p style={{color: "red"}}>{error}</p>}
         </div>
     )
 }
