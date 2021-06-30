@@ -5,3 +5,7 @@
 .registerButton:hover {
     color: #512B58;
 }
+
+.loginErr {
+    color: red;
+}

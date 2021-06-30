@@ -6,17 +6,19 @@ import Drawer from "../components/Drawer"
 import Link from "next/link"
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
+import { CheckAuth } from "./CheckAuth"
 
 
 function Header() {
     const [isAuth, setIsAuth] = useState(false)
-
+    
     useEffect(() => {
-        if(localStorage.getItem("auth")==="true"){
-        setIsAuth(true)
-        } else {
-        setIsAuth(false)
-        }
+        CheckAuth().then(res => setIsAuth(res)).catch(err => console.log(err))
+        // if(localStorage.getItem("auth")==="true"){
+        // setIsAuth(true)
+        // } else {
+        // setIsAuth(false)
+        // }
     }, [])
 
     if (isAuth) {

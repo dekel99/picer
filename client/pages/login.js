@@ -10,6 +10,7 @@ function login() {
 
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
+    const [loginErr, setLoginErr] = useState()
     const router = useRouter()
 
     function login(){
@@ -23,6 +24,8 @@ function login() {
             if (res.data==="ok"){
                 // router.push("/")
                 window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+            } else if (res.data === "usedoesnotexist") {
+                setLoginErr("Username Or Password Are Incorrect")
             }
         })
 
@@ -43,6 +46,7 @@ function login() {
                 <br/>
                 <TextField id="outlined-basic-password" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
                 <br/>
+                <p className={styles.loginErr}>{loginErr}</p>
                 <br/>
                 <Button style={{color: "#512B58", borderRadius: "8px"}} onClick={login} variant="outlined" color="primary">Login</Button>
                 <br/>

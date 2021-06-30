@@ -165,10 +165,9 @@ app.get("/public/uploads/:picId", function(req, res){
 app.post("/register", function(req, res){
   const {  password, name, username } = req.body
 
-  console.log(req.body)
-
   User.register({username: username}, password, function(err, user){
     if (err){
+      res.send("userexists")
       console.log(err)
     } else {
       passport.authenticate("local")(req, res, function() {
@@ -190,7 +189,15 @@ app.post("/login", function(req, res){
     if(err){
       console.log(err)
     } else {
-      passport.authenticate("local")(req, res, function() {
+      passport.authenticate("local", function(err, user, info) {
+        if (!user) {
+          res.send("usedoesnotexist")
+        } else {
+          req.logIn(user, function() {
+            res.send("ok")
+          })
+        }
+      })(req, res, function() {
         res.send("ok")
       })
     }
@@ -207,8 +214,8 @@ app.post("/post-upload", upload.array("file"), function(req, res){
 
     post = new Post({
       username: "dekel",
-      title: req.body.title, 
-      description: req.body.description,
+      title: req.body.title === "undefined" ? "" : req.body.title, 
+      description: req.body.description === "undefined" ? "" : req.body.description,
       time: time,
       images: {
           image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,
