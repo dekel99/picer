@@ -5,3 +5,7 @@
 .registerLink:hover {
     color: #512B58;
 }
+
+.registerErr{
+    color: red;
+}

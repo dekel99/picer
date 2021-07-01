@@ -13,26 +13,47 @@ function register() {
     const [name, setName] = useState()
     const [password, setPassword] = useState()
     const [confirm, setConfirm] = useState()
+    const [registerErr, setRegisterErr] = useState()
     const router = useRouter()
 
 
     function registerUser(){
         const data = {username: email, name, password, confirm}
-        
-        axios({
-            method: "POST",
-            url: process.env.NEXT_PUBLIC_SERVER_URL + "/register",
-            withCredentials: true,
-            data: data
-        })
-        .then(res => {
-            if(res.data==="ok"){
-                // router.push("/")
-                window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
-            }
-        }).catch(err=> console.log(err))
+
+        // if (email === undefined) {
+        //     setRegisterErr("Please Enter An Email")
+        // } else if (!email.includes("@") && !email.includes(".")){
+        //     setRegisterErr("Email Must Be A Valid Email Acount")
+        // } else if (name === undefined){
+        //     setRegisterErr("Please Enter Your Name")
+        // } else if (name.length < 2){
+        //     setRegisterErr("Please Enter A Valid Name")
+        // } else if (password === undefined) {
+        //     setRegisterErr("Please Enter A Password")
+        // } else if (confirm === undefined) {
+        //     setRegisterErr("Please Enter Your Password Again To Confirm It")
+        // } else if (password.length < 6) {
+        //     setRegisterErr("Password Must Be At Least 6 Characters")
+        // } else if (!/[a-zA-Z]+$/.test(password)) {
+        //     setRegisterErr("Password Must Contain Letters")
+        // } else if (password !== confirm) {
+        //     setRegisterErr("Passwords Must Match")
+        // } else {
+            axios({
+                method: "POST",
+                url: process.env.NEXT_PUBLIC_SERVER_URL + "/register",
+                withCredentials: true,
+                data: data
+            })
+                .then(res => {
+                    if(res.data==="ok"){
+                        window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+                    } else {
+                        setRegisterErr(res.data)
+                    }
+                }).catch(err=> console.log(err))
+        // }
     }
-    
     return (
         <div>
             <Head>
@@ -51,11 +72,13 @@ function register() {
                 <br/>
                 <TextField id="outlined-basic-confirm" type="password" label="Confirm Password" variant="outlined" onChange={(e) => {setConfirm(e.target.value)}}/>
                 <br/>
+                <p className={styles.registerErr}>{registerErr}</p>
                 <br/>
                 <Button onClick={registerUser} style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Register</Button>
                 <br/>
                 <p>Already Have An Acount? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
             </form>
+            
         </div>
     )
 }

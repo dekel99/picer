@@ -45,7 +45,7 @@ const upload = multer({
 //--------------------------------PASSPORT + MONGOOSE CONFIG------------------------------
 // Save session **
 app.use(session({
-  secret: "Our little secret.",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
@@ -137,11 +137,27 @@ app.get("/", function(req, res){
 })
 
 app.get("/posts", function(req, res){
-  Post.find((err, postList) =>{
-    if (!err){
-      res.send(postList)
-    }
-  })
+
+  if(req.isAuthenticated()){
+    Post.find((err, postList) =>{
+      if (!err){
+        let newList = postList
+
+        // Removes posts user allready voted for **
+        // newList.map((post, index) => {
+        //   if (post.votes){
+        //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username)){
+        //       delete newList[index]
+        //     }
+        //   }
+        // })
+        // newList = newList.filter(Boolean) // Removes undefined elements from array
+        res.send(newList)
+      }
+    })
+  } else {
+    res.send("Please login and try again")
+  }
 })
 
 app.get("/vote/:postId/:imgVoted", function(req, res){
@@ -183,6 +199,19 @@ app.get("/logout", function(req, res){
   res.send("logout")
 })
 
+app.get("/get-results/:postId", function(req, res){
+  const postId = req.params.postId
+
+  if(req.isAuthenticated()){
+    Post.find({_id: postId}, (err, foundPost) => {
+      res.send(foundPost[0].votes)
+    })  
+  } else {
+
+  }
+})
+
+
 app.get("/user-posts", function(req, res){
   
   if(req.isAuthenticated()){
@@ -211,7 +240,7 @@ app.post("/register", function(req, res){
 
   User.register({username: username}, password, function(err, user){
     if (err){
-      console.log(err)
+      res.send("Username allready exists")
     } else {
       passport.authenticate("local")(req, res, function() {
         User.findOneAndUpdate({username: username}, {name: name}, err => { 
@@ -236,7 +265,16 @@ app.post("/login", function(req, res){
     if(err){
       console.log(err)
     } else {
-      passport.authenticate("local")(req, res, function() {
+      passport.authenticate("local", function (err, user, info){
+        if (!user) {
+          res.send("Email or password is incorrect")
+        } else {
+          req.logIn(user, function() {
+            res.send("ok")
+          })
+        }
+      })
+      (req, res, function() {
         res.send("ok")
       })
     }
@@ -259,8 +297,8 @@ app.post("/post-upload", upload.array("file"), function(req, res){
           post = new Post({
             _id: new mongoose.Types.ObjectId(),
             name: foundUser[0].name,
-            title: req.body.title, 
-            description: req.body.description,
+            title: req.body.title === "undefined" ? "" : req.body.title, 
+            description: req.body.description === "undefined" ? "" : req.body.description,
             time: time,
             images: {
               image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,

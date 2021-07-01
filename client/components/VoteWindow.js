@@ -22,7 +22,7 @@ function VoteWindow(props) {
                     {imgSwap ? 
                     <img className={styles.voteImage} src={props.windowPost.images.image2}/> :
                     <img className={styles.voteImage} src={props.windowPost.images.image1}/>}
-                    <VoteButtons postIndex={props.postIndex} postId={props.windowPost._id} imgSwap={imgSwap} swap={swap}/>
+                    <VoteButtons clicked={props.clicked} openHandler={props.openHandler} postIndex={props.postIndex} postId={props.windowPost._id} imgSwap={imgSwap} swap={swap}/>
                 </div> 
             </div>}
         </div>

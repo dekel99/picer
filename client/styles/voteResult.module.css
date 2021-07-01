@@ -1,0 +1,18 @@
+.img1Resulat{
+    display: inline-block;
+    width: 50%;
+}
+
+.img2Resulat{
+    display: inline-block;
+    width: 50%;
+}
+
+.voteBar{
+    display: block;
+    margin: auto;
+}
+
+.resultsContainer{
+    
+}

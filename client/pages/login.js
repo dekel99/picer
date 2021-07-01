@@ -4,13 +4,12 @@ import { TextField, Button } from '@material-ui/core';
 import Link from "next/link"
 import axios from "axios"
 import styles from '../styles/login.module.css'
-import {useRouter} from 'next/router'
 
 function login() {
 
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
-    const router = useRouter()
+    const [loginErr, setLoginErr] = useState()
 
     function login(){
         const data = {username: email, password}
@@ -21,14 +20,11 @@ function login() {
             data: data
         }).then(res =>{
             if (res.data==="ok"){
-                // router.push("/")
                 window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+            } else {
+                setLoginErr(res.data)
             }
-        })
-
-        // localStorage.setItem("auth", "true")
-        // console.log(process.env.NEXT_PUBLIC_FRONT_URL);
-        // window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL + "/") 
+        }).catch(err => {console.log(err)})
     }
 
     return (
@@ -43,6 +39,7 @@ function login() {
                 <br/>
                 <TextField id="outlined-basic-password" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
                 <br/>
+                <p className={styles.loginErr}>{loginErr}</p>
                 <br/>
                 <Button style={{color: "#512B58", borderRadius: "8px"}} onClick={login} variant="outlined" color="primary">Login</Button>
                 <br/>

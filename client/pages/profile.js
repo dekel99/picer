@@ -1,12 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProfileSettings from '../components/ProfileSettings';
 import UserPosts from '../components/UserPosts';
+import {CheckAuth} from "../components/CheckAuth"
 import { Button } from '@material-ui/core';
 
 function profile() {
 
     const [openSettings, setOpenSettings] = useState(true)
-    // const [openMyPosts, setOpenMyPosts] = useState(false)
+
+    useEffect(() => {
+        CheckAuth().then(res => {
+            if(!res){
+                window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+            }
+        })
+        .catch(err => console.log(err))
+    }, [])
 
     return (
         <div>

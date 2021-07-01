@@ -10,7 +10,6 @@ function Layout({ children }) {
         CheckAuth().then(res => setIsAuth(res)).catch(err => console.log(err))
     }, [])
     
-
     if (isAuth){
         return (
             <div>

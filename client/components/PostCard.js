@@ -1,22 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import VoteResult from './VoteResult';
 import Card from '@material-ui/core/Card';
 import styles from "../styles/postCard.module.css"
-
-
+import axios from 'axios';
 
 function PostCard(props) {
 
-    const {name, images, title, description, time, votes, index} = props
-    let barValue 
+    const [votesUpdate, setVotesUpdate] = useState()
+    const {name, images, title, description, time, votes, index, postId, voteClicked} = props
 
-    if(votes){
-        if (votes.image1.length >= votes.image2.length && votes.image1.length!==0){
-            barValue = Math.round(100/(votes.image1.length + votes.image2.length) * votes.image1.length)
-        } else if (votes.image1.length < votes.image2.length){
-            barValue = Math.round(100/(votes.image1.length + votes.image2.length) * votes.image2.length)
-        } else {
-            barValue = 0
-        }
+
+    if(voteClicked){
+        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-results/" + postId , withCredentials:true})
+        .then(res => {
+            if(res.data){
+                setVotesUpdate(res.data)
+                props.clicked()
+            }
+        })
     }
 
     return (
@@ -33,13 +34,8 @@ function PostCard(props) {
                     <p className={styles.title}>{title}</p>
                     <p className={styles.description}>{description}</p>
                     <p className={styles.time}>{time}</p>
-                    {votes && <div className={styles.resultsContainer}>
-                        <p>results:</p>
-                        <p style={{fontWeight: "bold"}}>{barValue}%</p>
-                        <progress className={styles.voteBar} max="100" value={barValue}> 70% </progress>
-                        <h2 className={styles.img1Resulat}>{votes.image1.length}</h2> 
-                        <h2 className={styles.img2Resulat}>{votes.image2.length}</h2>
-                    </div>}
+                    {/* {votes && <VoteResult votes={votes} />} */}
+                    {votes ? <VoteResult votes={votes} /> : votesUpdate && <VoteResult votes={votesUpdate} />}
                 </Card>
             </div>
         </div>

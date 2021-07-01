@@ -45,20 +45,6 @@
     margin-right: 10px;
 } 
 
-.img1Resulat{
-    display: inline-block;
-    width: 50%;
-}
-
-.img2Resulat{
-    display: inline-block;
-    width: 50%;
-}
-
-.voteBar{
-    display: block;
-    margin: auto;
-}
 
 @media (min-aspect-ratio: 1/1), (min-width: 800px) {
     .image1{

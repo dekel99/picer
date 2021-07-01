@@ -19,12 +19,12 @@ function VoteButtons(props) {
             imgVoted = "image1"
         }
 
-
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/vote/" + props.postId + "/" + imgVoted, withCredentials: true})
-            .then(res => {
+            .then(res => {  
                 setLoading(false)
                 if (res.data==="ok"){
                     localStorage.setItem("votedList", [localStorage.getItem("votedList"), props.postIndex])
+                    props.clicked()
                 } else {
                     throw Error(res.data)
                 }
