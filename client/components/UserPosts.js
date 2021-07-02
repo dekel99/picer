@@ -15,7 +15,7 @@ function UserPosts() {
             .then(res => { 
                 setLoading(false)
                 
-                if (res.data[0].name){
+                if (res.data[0]){
                     setUserPosts(res.data)
                 } else if(res.data===[]){
                     console.log("array is empty")
@@ -42,6 +42,7 @@ function UserPosts() {
                         description={post.description} 
                         time={post.time}
                         votes={post.votes}
+                        deletePost={true}
                     />
                 )
             }): loading ? null : err ? null :

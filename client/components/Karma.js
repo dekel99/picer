@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import styles from "../styles/Karma.module.css"
+import Loading from './Loading'
 
 function Karma(props) {
     const [karma, setKarma] = useState()
@@ -24,7 +25,7 @@ function Karma(props) {
 
     return (
         <div>
-            <p className={styles.karma}>Karma: {karma}</p>
+            <p className={styles.karma}><span style={{fontWeight: "700"}}>Karma:</span> {karma ? karma : "Loading..."}</p>
         </div>
     )
 }

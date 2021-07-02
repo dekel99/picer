@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
 const session = require("express-session")
+const MongoDBStore = require("connect-mongodb-session")(session)
 const passport = require("passport")
 const LocalStrategy = require("passport-local")
 const findOrCreate = require("mongoose-findorcreate")
@@ -14,6 +15,11 @@ const app = express();
 app.use(cors({ origin: process.env.REACT_APP_FRONT_URL, credentials: true})) // Enable getting requests from client
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
+
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URL,
+  collection: "sessions"
+})
   
 // CORS header config **
 
@@ -47,7 +53,8 @@ const upload = multer({
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  store: store
 }))
 
 app.use(passport.initialize())
@@ -142,24 +149,25 @@ app.get("/", function(req, res){
 })
 
 app.get("/posts", function(req, res){
-
   if(req.isAuthenticated()){
-    Post.find((err, postList) =>{
-      if (!err){
-        let newList = postList
 
-        // Removes posts user allready voted for **
-        // newList.map((post, index) => {
-        //   if (post.votes){
-        //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username)){
-        //       delete newList[index]
-        //     }
-        //   }
-        // })
-        // newList = newList.filter(Boolean) // Removes undefined elements from array
-        res.send(newList)
-      }
-    })
+    Post.find((err, postList) =>{}).
+      populate('postCreator').
+        exec(function (err, postListWithUser) {
+          if (err) return handleError(err);
+          let newList = postListWithUser
+          
+          // Removes posts user allready voted for & and posts with post creator karma = 0 **
+            // newList.map((post, index) => {
+            //   if (post.votes){
+            //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0){
+            //       delete newList[index]
+            //     }
+            //   }
+            // })
+            // newList = newList.filter(Boolean) // Removes undefined elements from array
+            res.send(newList)
+        })
   } else {
     res.send("Please login and try again")
   }
@@ -170,43 +178,49 @@ app.get("/vote/:postId/:imgVoted", function(req, res){
   const imgVoted = req.params.imgVoted
   let updatedVotes
 
-  // Finds the post the user voted for and update it **
   if(req.isAuthenticated()){
-      Post.findById(postId, (err, post) => {
 
-      try{
-        if (imgVoted==="image1"){
-          updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
-        } else {
-          updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
-        }  
-        Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
-          if(!err){
-            res.send("ok")
+    // Finds post creator and -1 hes karma
+    Post.findById(postId, (err, post) => {}).
+      populate('postCreator').
+      exec(function (err, postWithUser) {
+        if (err) return handleError(err);
 
-            // Updates the karma of the user voted **
-            User.findOne({username: req.user.username}, (err, foundUser) => {
-              if(!err && foundUser.karma < 30){
-                User.findOneAndUpdate({username: req.user.username}, {karma: foundUser.karma + 1}, err => {
-                  if(err){
-                    console.log(err)
+        if(postWithUser.postCreator.karma !== 0){
+          User.findOneAndUpdate({_id: postWithUser.postCreator._id}, {karma: postWithUser.postCreator.karma - 1}, err => {
+            if (!err){
+  
+              // Finds the post the user voted for and update it **
+              Post.findById(postId, (err, post) => {
+              try{
+                if (imgVoted==="image1"){
+                  updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
+                } else {
+                  updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
+                }  
+    
+                Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
+                  if(!err){
+                    res.send("ok")
+        
+                    // Updates the karma of the user voted **
+                    User.findOne({username: req.user.username}, (err, foundUser) => {
+                      if(!err && foundUser.karma < 30){
+                        User.findOneAndUpdate({username: req.user.username}, {karma: foundUser.karma + 1}, err => {
+                          if(err){
+                            console.log(err)
+                          }
+                        })
+                      }
+                    })
                   }
                 })
-              }
+              } catch(err) {res.send(err)}
             })
           }
         })
-      } catch(err) {res.send(err)}
-    }).  
-    
-    
-    populate('postCreator').
-    exec(function (err, postCreator) {
-      if (err) return handleError(err);
-      console.log(postCreator)
+      }
     });  
-
-
   } else {
     res.send("Please log in and try again")
   }
@@ -280,7 +294,7 @@ app.post("/register", function(req, res){
       res.send("Username allready exists")
     } else {
       passport.authenticate("local")(req, res, function() {
-        User.findOneAndUpdate({username: username}, {name: name, karma: 0}, err => { 
+        User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
           if (!err){
             res.send("ok") 
           }
