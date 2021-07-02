@@ -62,10 +62,10 @@ mongoose.connect( process.env.MONGO_URL, {
 mongoose.set("useCreateIndex", true)
 
 postSchema = new mongoose.Schema({
-  name: String,
+  name: {type: String, required: true},
   title: String,
   description: String,
-  images: Object,
+  images: {type: Object, required: true},
   time: String,
   votes: Object,
   postCreator: { type: mongoose.Schema.Types.ObjectId, ref: "User"}
@@ -75,6 +75,11 @@ userSchema = new mongoose.Schema ({
   email: String,
   password: String,
   name: String,
+  karma: {
+    type: Number, 
+    min: 0, 
+    max: 30
+  },
   userPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
 })
 
@@ -165,24 +170,55 @@ app.get("/vote/:postId/:imgVoted", function(req, res){
   const imgVoted = req.params.imgVoted
   let updatedVotes
 
+  // Finds the post the user voted for and update it **
   if(req.isAuthenticated()){
       Post.findById(postId, (err, post) => {
+
       try{
         if (imgVoted==="image1"){
           updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
         } else {
           updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
-        }
-        
+        }  
         Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
           if(!err){
             res.send("ok")
+
+            // Updates the karma of the user voted **
+            User.findOne({username: req.user.username}, (err, foundUser) => {
+              if(!err && foundUser.karma < 30){
+                User.findOneAndUpdate({username: req.user.username}, {karma: foundUser.karma + 1}, err => {
+                  if(err){
+                    console.log(err)
+                  }
+                })
+              }
+            })
           }
         })
       } catch(err) {res.send(err)}
-    })  
+    }).  
+    
+    
+    populate('postCreator').
+    exec(function (err, postCreator) {
+      if (err) return handleError(err);
+      console.log(postCreator)
+    });  
+
+
   } else {
     res.send("Please log in and try again")
+  }
+})
+
+app.get("/get-karma", function(req, res){
+  if(req.isAuthenticated()){
+    User.findOne({username: req.user.username}, (err, foundUser) => {
+      if(!err){
+        res.send({karma: foundUser.karma})
+      }
+    })
   }
 })
 
@@ -211,6 +247,7 @@ app.get("/get-results/:postId", function(req, res){
   }
 })
 
+app.get("/")
 
 app.get("/user-posts", function(req, res){
   
@@ -224,7 +261,7 @@ app.get("/user-posts", function(req, res){
     });
   } 
   else {
-    res.send("auth fail")
+    res.send("You are not logged in or server couldn't fetch data")
   }
 })
 
@@ -243,7 +280,7 @@ app.post("/register", function(req, res){
       res.send("Username allready exists")
     } else {
       passport.authenticate("local")(req, res, function() {
-        User.findOneAndUpdate({username: username}, {name: name}, err => { 
+        User.findOneAndUpdate({username: username}, {name: name, karma: 0}, err => { 
           if (!err){
             res.send("ok") 
           }

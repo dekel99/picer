@@ -18,6 +18,7 @@ function VoteButtons(props) {
         } else {
             imgVoted = "image1"
         }
+        
 
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/vote/" + props.postId + "/" + imgVoted, withCredentials: true})
             .then(res => {  

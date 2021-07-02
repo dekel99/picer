@@ -12,16 +12,18 @@ function UserPosts() {
     useEffect(() => {
         setLoading(true)
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/user-posts", withCredentials: true})
-            .then(res => {
-                if (res.data){
+            .then(res => { 
+                setLoading(false)
+                
+                if (res.data[0].name){
                     setUserPosts(res.data)
-                    setLoading(false)
+                } else if(res.data===[]){
+                    console.log("array is empty")
                 } else {
-                    throw Error ("You are not logged in or server couldn't fetch data")
+                    throw Error (res.data)
                 } 
             })
             .catch(err => {
-                setLoading(false)
                 setErr(err.message)
             })
     }, [])
@@ -30,7 +32,7 @@ function UserPosts() {
         <div>
             <Loading loading={loading} />
             { err ? <p>{err}</p> : <h1>your posts</h1> }
-            {userPosts && userPosts.slice(0).reverse().map((post, index) => {
+            {userPosts ? userPosts.slice(0).reverse().map((post, index) => {
                 return(
                     <PostCard 
                         key={index}
@@ -42,7 +44,12 @@ function UserPosts() {
                         votes={post.votes}
                     />
                 )
-            })}
+            }): loading ? null : err ? null :
+            <div>
+                <br/>
+                <p>You do not have any posts yet...</p>
+                <img src="https://cdn.dribbble.com/users/1121009/screenshots/11030107/media/25be2b86a12dbfd8da02db4cfcbfe50a.jpg?compress=1&resize=400x300"/>
+            </div>}
         </div>
     )
 }
