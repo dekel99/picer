@@ -79,6 +79,10 @@ function vote() {
         }
     }
 
+    function closeWindow() {
+        setVoteWinOpen(false)
+    }
+
     return (
         <div>
             {error && <p>{error}</p>}
@@ -112,7 +116,13 @@ function vote() {
                     </div>
                 )
             })}
-            <VoteWindow className={classes.polygon} clicked={clicked} postIndex={postIndex} windowPost={windowPost} openHandler={openHandler} voteWinOpen={voteWinOpen} />
+            <VoteWindow className={classes.polygon}
+               clicked={clicked} postIndex={postIndex}
+               windowPost={windowPost}
+               openHandler={openHandler}
+                voteWinOpen={voteWinOpen}
+                closeWindow={closeWindow}
+                 />
         </div>
     )
 }

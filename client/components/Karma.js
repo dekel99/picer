@@ -10,7 +10,9 @@ function Karma(props) {
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-karma", withCredentials: true})
             .then(res => { console.log(res.data)
                 if(res.data){
-                    if (res.data.karma <= 10){
+                    if (res.data.karma == 0) {
+                        setKarma("Empty")
+                    } else if (res.data.karma > 0 && res.data.karma <= 10){
                         setKarma("Low")
                     } else if (res.data.karma > 10 && res.data.karma <= 20){
                         setKarma("Meduim")

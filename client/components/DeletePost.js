@@ -11,7 +11,7 @@ function DeletePost() {
     return (
         <div className={styles.deleteIcon}>
             <button onClick={deletePost}>
-                <DeleteOutlineIcon fontSize="large" />
+                <DeleteOutlineIcon fontSize="small" />
             </button>
         </div>
     )

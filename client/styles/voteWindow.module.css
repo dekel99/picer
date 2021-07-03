@@ -31,6 +31,10 @@
     object-fit: cover;
 }
 
+.quitVoteWindow {
+    float: right;
+}
+
 
 
 @media (min-aspect-ratio: 1/1), (min-width: 800px) {

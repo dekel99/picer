@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import VoteButtons from './VoteButtons'
 import styles from "../styles/voteWindow.module.css"
+import CloseIcon from '@material-ui/icons/Close';
 
 function VoteWindow(props) {
     const [imgSwap, setImgSwap] = useState(false)
@@ -18,6 +19,9 @@ function VoteWindow(props) {
             {props.voteWinOpen && 
             <div className={styles.windowContainer} onClick={props.openHandler}>
                 <div className={styles.voteWindow}>
+                    <button className={styles.quitVoteWindow} onClick={props.closeWindow}>
+                        <CloseIcon />
+                    </button>
                     <h1>vote here</h1>
                     {imgSwap ? 
                     <img className={styles.voteImage} src={props.windowPost.images.image2}/> :
