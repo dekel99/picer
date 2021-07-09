@@ -8,7 +8,7 @@ function Karma(props) {
 
     useEffect(() => {
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-karma", withCredentials: true})
-            .then(res => { console.log(res.data)
+            .then(res => {
                 if(res.data){
                     if (res.data.karma == 0) {
                         setKarma("Empty")

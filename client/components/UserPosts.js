@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import PostCard from './PostCard'
-import Loading from "./Loading"
+import LoadingSmall from "./LoadingSmall"
 
 function UserPosts() {
 
@@ -30,8 +30,8 @@ function UserPosts() {
 
     return(
         <div>
-            <Loading loading={loading} />
-            { err ? <p>{err}</p> : <h1>your posts</h1> }
+            <LoadingSmall loading={loading} regular={true} style={{marginTop: "200px"}}/>
+            { err && <p>{err}</p> }
             {userPosts ? userPosts.slice(0).reverse().map((post, index) => {
                 return(
                     <PostCard 
@@ -42,6 +42,8 @@ function UserPosts() {
                         description={post.description} 
                         time={post.time}
                         votes={post.votes}
+                        postId={post._id}
+                        active={post.active}
                         deletePost={true}
                     />
                 )

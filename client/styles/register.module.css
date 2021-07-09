@@ -9,3 +9,25 @@
 .registerErr{
     color: red;
 }
+
+.nameField{
+    margin-bottom: 15px;
+}
+
+.nameField{
+    margin-bottom: 15px;
+}
+
+.nameField{
+    margin-bottom: 15px;
+}
+
+.nameField{
+    margin-bottom: 15px;
+}
+
+@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+    .pageContainer{
+        margin-top: 120px;
+    }
+}

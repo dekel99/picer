@@ -19,10 +19,11 @@ function VoteWindow(props) {
             {props.voteWinOpen && 
             <div className={styles.windowContainer} onClick={props.openHandler}>
                 <div className={styles.voteWindow}>
-                    <button className={styles.quitVoteWindow} onClick={props.closeWindow}>
+                    <div className={styles.quitVoteWindow} onClick={props.closeWindow}>
                         <CloseIcon />
-                    </button>
-                    <h1>vote here</h1>
+                    </div>
+                    <br/>
+                    <h3>Wich picture is better?</h3>
                     {imgSwap ? 
                     <img className={styles.voteImage} src={props.windowPost.images.image2}/> :
                     <img className={styles.voteImage} src={props.windowPost.images.image1}/>}

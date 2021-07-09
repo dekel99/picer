@@ -8,7 +8,8 @@ export default class MyDocument extends Document {
       <Html lang='en'>
         <Head/>
         <body>
-          <Main />
+          <div id="delete" />
+          <Main/>   
           <NextScript />
           <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         </body>

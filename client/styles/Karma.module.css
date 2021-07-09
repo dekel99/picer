@@ -1,3 +1,9 @@
 .karma{
-    position: sticky;
+    border: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    display: inline-block;
+    padding: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
 }

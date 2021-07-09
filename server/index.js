@@ -75,6 +75,7 @@ postSchema = new mongoose.Schema({
   images: {type: Object, required: true},
   time: String,
   votes: Object,
+  active: Boolean,
   postCreator: { type: mongoose.Schema.Types.ObjectId, ref: "User"}
 })
 
@@ -119,6 +120,7 @@ Post.find((err, picerDB) =>{
         title: "this is title", 
         description: "this is very long description .................", 
         time: "12:00", 
+        active: true,
         images: {
             image1: "https://images.pexels.com/photos/1987301/pexels-photo-1987301.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
             image2: "https://vinusimages.co/wp-content/uploads/2018/10/EG7A2390.jpgA_.jpg"  
@@ -131,6 +133,7 @@ Post.find((err, picerDB) =>{
     title: "this is title", 
     description: "this is very long description .................", 
     time: "13:00", 
+    active: true,
     images: {
       image1: "https://www.kaizend.co.il/wp-content/uploads/2019/09/%D7%AA%D7%9E%D7%95%D7%A0%D7%95%D7%AA-%D7%9C%D7%94%D7%95%D7%A8%D7%93%D7%94-%D7%91%D7%97%D7%99%D7%A0%D7%9D-1-768x233.jpg",
       image2: "https://www.donet.co.il/wp-content/uploads/2018/01/Beautiful-Image-Database.jpg"
@@ -158,18 +161,18 @@ app.get("/posts", function(req, res){
           let newList = postListWithUser
           
           // Removes posts user allready voted for & and posts with post creator karma = 0 **
-            // newList.map((post, index) => {
-            //   if (post.votes){
-            //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0){
-            //       delete newList[index]
-            //     }
-            //   }
-            // })
-            // newList = newList.filter(Boolean) // Removes undefined elements from array
-            res.send(newList)
+            newList.map((post, index) => {
+              if (post.votes){
+                if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false){
+                  delete newList[index]
+                }
+              }
+            })
+            newList = newList.filter(Boolean) // Removes undefined elements from array
+            res.json({success: true, newList: newList})
         })
   } else {
-    res.send("Please login and try again")
+    res.json({success: false, message:"Please login and try again"})
   }
 })
 
@@ -226,6 +229,61 @@ app.get("/vote/:postId/:imgVoted", function(req, res){
   }
 })
 
+app.get("/pause-toggle/:postId", function(req, res){
+  const postId = req.params.postId
+  let toggleUpdate
+
+  if(req.isAuthenticated()){
+    User.findOne({username: req.user.username}).
+    populate('userPosts').
+    exec(function (err, userWithPosts) {
+      if (err) return handleError(err);
+
+      userWithPosts.userPosts.map(post => {
+        if(post._id == postId){
+
+          if (post.active===true){
+            toggleUpdate = false
+          } else {
+            toggleUpdate = true
+          }
+          Post.findOneAndUpdate({ _id: postId }, {active: toggleUpdate} ,err => {
+            if (!err){
+              res.send("active: " + toggleUpdate)
+            } else {
+              res.send(err)
+            }
+          })
+        }
+      })
+    });
+  }
+})
+
+app.get("/delete-post/:postId", function(req, res){
+  const postId = req.params.postId
+  
+  if(req.isAuthenticated()){
+    User.findOne({username: req.user.username}).
+    populate('userPosts').
+    exec(function (err, userWithPosts) {
+      if (err) return handleError(err);
+
+      userWithPosts.userPosts.map(post => {
+        if(post._id == postId){
+          Post.deleteOne({ _id: postId }, (err) => {
+            if (!err){
+              res.send("Post deleted")
+            } else {
+              res.send(err)
+            }
+          })
+        }
+      })
+    });
+  }
+})
+
 app.get("/get-karma", function(req, res){
   if(req.isAuthenticated()){
     User.findOne({username: req.user.username}, (err, foundUser) => {
@@ -235,6 +293,17 @@ app.get("/get-karma", function(req, res){
     })
   }
 })
+
+app.get("/get-name", function(req, res){
+  if(req.isAuthenticated()){
+    User.findOne({username: req.user.username}, (err, foundUser) => {
+      if(!err){
+        res.send(foundUser.name)
+      }
+    })
+  }
+})
+
 
 app.get("/check-auth", function(req, res){
   if(req.isAuthenticated()){
@@ -261,8 +330,6 @@ app.get("/get-results/:postId", function(req, res){
   }
 })
 
-app.get("/")
-
 app.get("/user-posts", function(req, res){
   
   if(req.isAuthenticated()){
@@ -287,21 +354,34 @@ app.get("/public/uploads/:picId", function(req, res){
 //------------------------------------POST ROUTS---------------------------------------
 
 app.post("/register", function(req, res){
-  const {  password, name, username } = req.body
+  const { password, confirm, name, username } = req.body
 
-  User.register({username: username}, password, function(err, user){
-    if (err){
-      res.send("Username allready exists")
-    } else {
-      passport.authenticate("local")(req, res, function() {
-        User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
-          if (!err){
-            res.send("ok") 
-          }
+  if (!name) return res.json({success:false, message: "Please enter your name"})
+
+  if (password===confirm){
+    User.register({username: username}, password, function(err, user){
+      if (err){
+        if (err.message==="No username was given"){
+          res.json({success: false, message: "Please enter a valid email"})
+        } else if (err.message==="No password was given"){
+          res.json({success: false, message: "Please enter a password"})
+        } else {
+          res.json({success: false, message: "Username allready exists"})
+        }
+
+      } else {
+        passport.authenticate("local")(req, res, function() {
+          User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
+            if (!err){
+              res.json({success: true})
+            }
+          })
         })
-      })
-    }
-  })
+      }
+    })
+  } else {
+    res.json({success: false, message: "Passwords does not match"})
+  }
 })
 
 app.post("/login", function(req, res){
@@ -356,6 +436,7 @@ app.post("/post-upload", upload.array("file"), function(req, res){
               image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
             },
             votes: {image1: [], image2: []},
+            active: true,
             postCreator: foundUser[0]._id
           })
   
@@ -384,6 +465,44 @@ app.post("/post-upload", upload.array("file"), function(req, res){
     }
 })
 
+app.post("/change-name", function(req, res){
+  if (req.isAuthenticated()){
+    const newName = req.body.name
+    if (!newName || newName.length<2) return res.json({success: false, message: "Name must be at least 2 characters"})
+
+    User.findOneAndUpdate({username: req.user.username}, {name: newName}, err => {
+      if(!err){
+        res.json({success: true, message: "Name has changed"})
+      } else {
+        res.json({success: false, message: "Error occured"})
+      }
+    })
+  } else {
+    res.json({success: false, message: "Please login and try again"})
+  }
+})
+
+app.post("/change-password", function(req, res){
+  if (req.isAuthenticated()){
+    const {newPass, currentPass, confirmPass} = req.body
+
+    if (newPass===confirmPass){
+      req.user.changePassword(currentPass, newPass, (err) => {
+        if(!err){
+          res.json({success: true, message: "Password has changed"})
+        } else {
+          if (err.message === "Password or username is incorrect"){
+            res.json({success: false, message: "Password is incorrect"})
+          } else {
+            res.json({success: false, message: "Required fields are empty"})
+          }
+        }
+      })
+    } else {
+      res.json({success: false, message: "Passwords does't match"})
+    }
+  }
+})
 
 //************************************************* */
 

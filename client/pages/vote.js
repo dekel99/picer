@@ -1,39 +1,14 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import PostCard from "../components/PostCard"
-import Loading from '../components/Loading'
+import LoadingSmall from '../components/LoadingSmall'
+import NotFound from '../components/NotFound'
 import VoteWindow from '../components/VoteWindow'
 import styles from "../styles/vote.module.css"
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Karma from '../components/Karma'
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      height: 180,
-    },
-    wrapper: {
-      width: 100 + theme.spacing(2),
-    },
-    paper: {
-      zIndex: 1,
-      position: 'relative',
-      margin: theme.spacing(1),
-    },
-    svg: {
-      width: 100,
-      height: 100,
-    },
-    polygon: {
-      fill: theme.palette.common.white,
-      stroke: theme.palette.divider,
-      strokeWidth: 1,
-    },
-  }));
-
 
 function vote() {
-    const classes = useStyles();
 
     const [postList, setPostList] = useState()
     const [loading, setLoading] = useState(false)
@@ -41,6 +16,7 @@ function vote() {
     const [windowPost, setWindowPost] = useState()
     const [postIndex, setPostIndex] = useState()
     const [voteClicked, setVoteClicked] = useState(false)
+    const [noPostsMessage, setNoPostsMessage] = useState(false)
     const [error, setError] = useState()
 
     // Checks if user is auth and render list of posts
@@ -49,11 +25,16 @@ function vote() {
         localStorage.setItem("votedList", "")
         axios({mothed: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/posts", withCredentials: true})
             .then(res => {
-                if (res.data[0]._id){
-                    setLoading(false)
-                    setPostList(res.data)
+                if (res.data.success){
+                    if(res.data.newList.length!==0){
+                        setLoading(false)
+                        setPostList(res.data.newList)
+                    } else {
+                        setNoPostsMessage(true)
+                        setLoading(false)
+                    }
                 } else {
-                    throw Error(res.data)
+                    throw Error(res.data.message)
                 }
             })
             .catch(err => {
@@ -86,7 +67,8 @@ function vote() {
     return (
         <div>
             {error && <p>{error}</p>}
-            <Loading loading={loading} />
+            <NotFound notFound={noPostsMessage} />
+            <LoadingSmall loading={loading} regular={false} style={{marginTop: "200px"}}/>
             {postList && <Karma voteClicked={voteClicked} />}
             {postList && postList.slice(0).reverse().map((post, index) => {
                 
@@ -97,11 +79,12 @@ function vote() {
                 }
                 return(
                     <div className={styles.postContainer} onClick={openHandler} key={index}>
-                        {checkIfVoted && <div className={styles.voted}>
-                            <div className={styles.checkIcon}>
-                                <CheckCircleOutlineIcon style={{color: "#339f3d", fontSize: "50px"}} />
-                            </div>
-                        </div>}
+                        {checkIfVoted && 
+                            <div className={styles.voted}>
+                                <div className={styles.checkIcon}>
+                                    <CheckCircleOutlineIcon style={{color: "#339f3d", fontSize: "50px"}} />
+                                </div>
+                            </div>}
                         <PostCard
                             index={index}  
                             postId={post._id}   
@@ -116,8 +99,9 @@ function vote() {
                     </div>
                 )
             })}
-            <VoteWindow className={classes.polygon}
-               clicked={clicked} postIndex={postIndex}
+            <VoteWindow
+               clicked={clicked} 
+               postIndex={postIndex}
                windowPost={windowPost}
                openHandler={openHandler}
                 voteWinOpen={voteWinOpen}

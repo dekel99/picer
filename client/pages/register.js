@@ -21,23 +21,23 @@ function register() {
         const data = {username: email, name, password, confirm}
 
         // if (email === undefined) {
-        //     setRegisterErr("Please Enter An Email")
+        //     setRegisterErr("Please enter an email")
         // } else if (!email.includes("@") && !email.includes(".")){
-        //     setRegisterErr("Email Must Be A Valid Email Acount")
+        //     setRegisterErr("Email must be a valid email acount")
         // } else if (name === undefined){
-        //     setRegisterErr("Please Enter Your Name")
+        //     setRegisterErr("Please enter your name")
         // } else if (name.length < 2){
-        //     setRegisterErr("Please Enter A Valid Name")
+        //     setRegisterErr("Name must be at least 2 characters")
         // } else if (password === undefined) {
-        //     setRegisterErr("Please Enter A Password")
+        //     setRegisterErr("Please enter a password")
         // } else if (confirm === undefined) {
-        //     setRegisterErr("Please Enter Your Password Again To Confirm It")
+        //     setRegisterErr("Please enter your password again to confirm it")
         // } else if (password.length < 6) {
-        //     setRegisterErr("Password Must Be At Least 6 Characters")
+        //     setRegisterErr("Password must be at least 6 characters")
         // } else if (!/[a-zA-Z]+$/.test(password)) {
-        //     setRegisterErr("Password Must Contain Letters")
+        //     setRegisterErr("Password must contain letters")
         // } else if (password !== confirm) {
-        //     setRegisterErr("Passwords Must Match")
+        //     setRegisterErr("Passwords must match")
         // } else {
             axios({
                 method: "POST",
@@ -46,37 +46,41 @@ function register() {
                 data: data
             })
                 .then(res => {
-                    if(res.data==="ok"){
+                    if(res.data.success){
                         window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
                     } else {
-                        setRegisterErr(res.data)
+                        setRegisterErr(res.data.message)
                     }
                 }).catch(err=> console.log(err))
         // }
     }
     return (
-        <div>
+        <div className={styles.pageContainer}>
             <Head>
                 <title>Register</title>
             </Head>
             <h1>Register</h1>
+            <p className={styles.registerErr}>{registerErr}</p>
             <form>
-                <TextField id="outlined-basic-name" type="text" label="Full Name" variant="outlined" onChange={(e) => {setName(e.target.value)}}/>
-                <br/>
-                <br/>
-                <TextField id="outlined-basic-email" type="username" name="username" label="Email" variant="outlined" onChange={(e) => {setEmail(e.target.value)}}/>
-                <br/>
-                <br/>
-                <TextField id="outlined-basic-password" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
-                <br/>
-                <br/>
-                <TextField id="outlined-basic-confirm" type="password" label="Confirm Password" variant="outlined" onChange={(e) => {setConfirm(e.target.value)}}/>
-                <br/>
-                <p className={styles.registerErr}>{registerErr}</p>
-                <br/>
+
+                <div className={styles.nameField}>
+                    <TextField size="small" id="outlined-basic-name" type="text" label="Full Name" variant="outlined" onChange={(e) => {setName(e.target.value)}}/>
+                </div>
+                
+                <div className={styles.nameField}>
+                    <TextField size="small" id="outlined-basic-email" type="username" name="username" label="Email" variant="outlined" onChange={(e) => {setEmail(e.target.value)}}/>
+                </div>
+
+                <div className={styles.nameField}>
+                    <TextField size="small" id="outlined-basic-password" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
+                </div>
+
+                <div className={styles.nameField}>
+                    <TextField size="small" id="outlined-basic-confirm" type="password" label="Confirm Password" variant="outlined" onChange={(e) => {setConfirm(e.target.value)}}/>
+                </div>
+
                 <Button onClick={registerUser} style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Register</Button>
-                <br/>
-                <p>Already Have An Acount? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
+                <p>Already have an acount? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
             </form>
             
         </div>

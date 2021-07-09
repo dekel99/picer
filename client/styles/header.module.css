@@ -2,11 +2,15 @@
 
 .appNameContainer{
     height: 70px;
-    background-color: #512B58;
     top: 0;
+    right: 0;
+    left: 0;
     position: absolute;
     width: 100%;
     margin: auto;
+    background: rgb(123 80 131);
+    /* box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 ); */
+    border-radius: 5px;
 }
 
 .drawerContainer{

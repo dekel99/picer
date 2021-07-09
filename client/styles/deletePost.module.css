@@ -1,0 +1,54 @@
+
+.deleteIcon{
+    cursor: pointer;
+}
+
+.windowContainer{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.377);
+    z-index: 200;
+}
+
+.deleteWindow{
+    position: fixed;
+    background-color: white;
+    min-width: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    z-index: 300;
+}
+
+.windowHeading{
+    font-weight: 700;
+}
+
+.windowText{
+    margin: 25px;
+}
+
+.btnsContainer{
+    position: relative;
+    bottom: 10px;
+    right: 0;
+    left: 0;
+}
+
+.cancelBtn{
+    width: 40%;
+    max-width: 140px;
+    display: inline-block;
+    margin: auto;
+}
+
+.deleteBtn{
+    width: 40%;
+    max-width: 140px;
+    display: inline-block;
+    margin: auto;
+}

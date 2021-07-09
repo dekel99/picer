@@ -1,0 +1,9 @@
+.smallLoadingContainer{
+
+}
+
+.smallLoading{
+    display: inline-block;
+    margin: auto;
+    z-index: 2000;
+}

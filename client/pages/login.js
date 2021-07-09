@@ -28,21 +28,24 @@ function login() {
     }
 
     return (
-        <div>
+        <div className={styles.pageContainer}>
             <Head>
                 <title>Login</title>
             </Head>
             <h1>Login</h1>
+            <p className={styles.loginErr}>{loginErr}</p>
             <form>
-                <TextField id="outlined-basic-email" type="username" name="username" label="Email" variant="outlined" onChange={(e) => {setEmail(e.target.value)}}/>
-                <br/>
-                <br/>
-                <TextField id="outlined-basic-password" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
-                <br/>
-                <p className={styles.loginErr}>{loginErr}</p>
-                <br/>
-                <Button style={{color: "#512B58", borderRadius: "8px"}} onClick={login} variant="outlined" color="primary">Login</Button>
-                <br/>
+                <div className={styles.emailField}>
+                    <TextField id="outlined-basic-email" size="small" type="username" name="username" label="Email" variant="outlined" onChange={(e) => {setEmail(e.target.value)}}/>
+                </div>
+ 
+                <div className={styles.passField}>
+                    <TextField id="outlined-basic-password" size="small" type="password" name="password" label="Password" variant="outlined" onChange={(e) => {setPassword(e.target.value)}}/>
+                </div>
+
+                <div className={styles.loginBtn}>
+                    <Button style={{color: "#512B58", borderRadius: "5px"}} onClick={login} variant="outlined" color="primary">Login</Button>
+                </div>
                 <p>Don't have an account yet? <Link href="/register"><a className={styles.registerButton}> Register</a></Link></p>
             </form>
         </div>

@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import ProfileSettings from '../components/ProfileSettings';
-import UserPosts from '../components/UserPosts';
 import {CheckAuth} from "../components/CheckAuth"
-import { Button } from '@material-ui/core';
+import ProfileMenu from "../components/ProfileMenu"
+import styles from "../styles/profile.module.css"
+import axios from 'axios';
 
 function profile() {
 
-    const [openSettings, setOpenSettings] = useState(true)
+    const [name, setName] = useState()
 
     useEffect(() => {
+        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-name", withCredentials: true})
+            .then(res => {
+                if (res.data){
+                    setName(res.data)
+                }
+            })
+            .catch(err => console.log(err))
+
         CheckAuth().then(res => {
             if(!res){
                 window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
@@ -19,13 +27,10 @@ function profile() {
 
     return (
         <div>
-            <h1>profile</h1>
-            <Button style={{color: "#512B58", borderRadius: "8px"}} onClick={() => {setOpenSettings(false)}} variant="outlined" color="primary">My posts</Button>
-            <Button style={{color: "#512B58", borderRadius: "8px"}} onClick={() => {setOpenSettings(true)}} variant="outlined" color="primary">Account settings</Button>
-            <br/>
-            <br/>
-            {openSettings ? <ProfileSettings /> : <UserPosts />}
-
+            <h2 className={styles.helloText}>Hi, {name}</h2>
+            <div className={styles.profileMenuContainer}>
+                <ProfileMenu name={name}/>
+            </div>
         </div>
     )
 }

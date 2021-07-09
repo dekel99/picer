@@ -1,17 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap');
 
-.app-name-container{
-  height: 100px;
-  position: fixed;
-  background-color: #440A67;
-  top: 100px
-}
 
 .appMainHeader{
   font-family: 'Oswald', sans-serif;
+
 }
 
 .appSecondHeader{
   font-family: 'Oswald', sans-serif, "Extra-light 200";
+}
+
+.mainImg{
+  width: 100%; 
+  max-width: 600px; 
+  border-radius: 5px
+}
+
+.appMainText{
+  padding: 10px;
+}
+
+@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+  .mainImg{
+    margin-top: 40px; 
+    max-width: 600px; 
+    margin: auto
+  }
+  
+  .appMainText{
+    max-width: 600px; 
+    margin: auto
+
+  }
 }
