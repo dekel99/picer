@@ -1,7 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import styles from "../styles/Karma.module.css"
-import Loading from './Loading'
 
 function Karma(props) {
     const [karma, setKarma] = useState()
@@ -11,23 +10,28 @@ function Karma(props) {
             .then(res => {
                 if(res.data){
                     if (res.data.karma == 0) {
-                        setKarma("Empty")
-                    } else if (res.data.karma > 0 && res.data.karma <= 10){
-                        setKarma("Low")
-                    } else if (res.data.karma > 10 && res.data.karma <= 20){
-                        setKarma("Meduim")
-                    } else if ( res.data.karma > 20 && res.data.karma <= 29){
-                        setKarma("High")
+                        setKarma()
+                    } else if (res.data.karma > 0 && res.data.karma <= 15){
+                        setKarma(styles.lowBar)
+                    } else if (res.data.karma > 15 && res.data.karma <= 29){
+                        setKarma(styles.mediumBar)
                     } else if (res.data.karma == 30){
-                        setKarma("Max")
+                        setKarma(styles.maxBar)
                     }
                 }
             })       
     }, [props.voteClicked])
 
     return (
-        <div>
-            <p className={styles.karma}><span style={{fontWeight: "700"}}>Karma:</span> {karma ? karma : "Loading..."}</p>
+        <div className={styles.karmaContainer}>
+            <p style={{fontWeight: "700"}}>Karma:</p>
+            <div className={styles.karmaBar}>
+                <div className={styles.barsContainer}>
+                    <div className={styles.karmaBorderLeft}></div>
+                    <div className={karma} />
+                    <div className={styles.karmaBorderRight}></div>
+                </div> 
+            </div>
         </div>
     )
 }

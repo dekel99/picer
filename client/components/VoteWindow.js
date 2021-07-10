@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import VoteButtons from './VoteButtons'
 import styles from "../styles/voteWindow.module.css"
 import CloseIcon from '@material-ui/icons/Close';
+import ImageVoteToggle from "./ImageVoteToggle"
 
 function VoteWindow(props) {
     const [imgSwap, setImgSwap] = useState(false)
@@ -24,9 +25,12 @@ function VoteWindow(props) {
                     </div>
                     <br/>
                     <h3>Wich picture is better?</h3>
-                    {imgSwap ? 
+                    <div className={styles.imageToggleContainer}>
+                        <ImageVoteToggle images={props.windowPost.images} />
+                    </div>
+                    {/* {imgSwap ? 
                     <img className={styles.voteImage} src={props.windowPost.images.image2}/> :
-                    <img className={styles.voteImage} src={props.windowPost.images.image1}/>}
+                    <img className={styles.voteImage} src={props.windowPost.images.image1}/>} */}
                     <VoteButtons clicked={props.clicked} openHandler={props.openHandler} postIndex={props.postIndex} postId={props.windowPost._id} imgSwap={imgSwap} swap={swap}/>
                 </div> 
             </div>}

@@ -1,4 +1,4 @@
-.karma{
+/* .karma{
     border: solid;
     border-radius: 5px;
     border-width: 1px;
@@ -6,4 +6,63 @@
     padding: 4px;
     padding-right: 8px;
     padding-left: 8px;
+} */
+
+.karmaBar {
+    border-style: solid;
+    border-width: 2px;
+    width: 100px;
+    height: 40px;
+    margin: auto;
+    position: relative;
+    border-radius: 5px;
+    border-color: rgb(78, 77, 77);
+    z-index: 104;
+}
+
+.karmaBorderLeft {
+    border-left: solid;
+    border-width: 1px;
+    height: 36px;
+    left: 33%;
+    position: absolute;
+    z-index: 110;
+    border-color: rgb(78, 77, 77);
+}
+
+.karmaBorderRight {
+    border-left: solid;
+    border-width: 1px;
+    height: 36px;
+    left: 66%;
+    position: absolute;
+    z-index: 110;
+    border-color: rgb(78, 77, 77);
+}
+
+.lowBar {
+    background-color:#F05454;
+    height: 36px;
+    width: 33%;
+    position: absolute;
+    left: 0;
+    z-index: 100;
+}
+
+.mediumBar {
+    background-color: #F5A962;
+    height: 36px;
+    width: 66%;
+    position: absolute;
+    left: 0;
+    z-index: 101;
+}
+
+.maxBar {
+    background-color: #9fd668;
+    height: 36px;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    z-index: 102;
 }
