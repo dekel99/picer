@@ -50,11 +50,17 @@ const upload = multer({
 
 //--------------------------------PASSPORT + MONGOOSE CONFIG------------------------------
 // Save session **
+app.set('trust proxy', 1)
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
+  proxy: true,
+  // cookie: {
+  //   secure: true
+  // },
   store: store
+
 }))
 
 app.use(passport.initialize())
