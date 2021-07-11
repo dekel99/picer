@@ -9,8 +9,9 @@ import styles from "../styles/postCard.module.css"
 function PostCard(props) {
 
     const [votesUpdate, setVotesUpdate] = useState()
-    const {name, images, title, description, time, votes, index, postId, voteClicked, deletePost, active} = props
+    const {name, images, title, description, time, votes, index, postId, voteClicked, deletePost, active, loadMyPosts} = props
 
+    
     if(voteClicked){
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-results/" + postId , withCredentials:true})
         .then(res => {
@@ -33,7 +34,7 @@ function PostCard(props) {
                                 <Pause active={active} postId={postId}/>
                             </div>
                             <div className={styles.deleteContainer}>
-                                <DeletePost postId={postId}/>
+                                <DeletePost loadMyPosts={loadMyPosts} postId={postId}/>
                             </div>
                         </div> }
                     </div>

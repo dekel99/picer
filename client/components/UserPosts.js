@@ -9,7 +9,8 @@ function UserPosts() {
     const [userPosts, setUserPosts] = useState()
     const [err, setErr] = useState()
 
-    useEffect(() => {
+    function loadMyPosts(){
+        setUserPosts()
         setLoading(true)
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/user-posts", withCredentials: true})
             .then(res => { 
@@ -26,7 +27,12 @@ function UserPosts() {
             .catch(err => {
                 setErr(err.message)
             })
+    }
+
+    useEffect(() => {
+        loadMyPosts()
     }, [])
+    
 
     return(
         <div>
@@ -45,6 +51,7 @@ function UserPosts() {
                         postId={post._id}
                         active={post.active}
                         deletePost={true}
+                        loadMyPosts={loadMyPosts}
                     />
                 )
             }): loading ? null : err ? null :

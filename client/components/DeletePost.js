@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios';
+import {useRouter} from 'next/router'
 import Loading from './Loading';
 import Portal from './Portal';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -11,10 +12,9 @@ function DeletePost(props) {
 
     const [isDeleteWindow, setIsDeleteWindow] = useState(false)
     const [loading, setLoading] = useState(false)
-    const { postId } = props
+    const { postId, loadMyPosts } = props
 
     function deleteWindowHandler(){
-        console.log(isDeleteWindow)
         setIsDeleteWindow(!isDeleteWindow)
     }
 
@@ -25,6 +25,7 @@ function DeletePost(props) {
                 if(res.data==="Post deleted"){
                     setIsDeleteWindow(!isDeleteWindow)
                     setLoading(false)
+                    loadMyPosts()
                 }
             }).catch(err => {
                 setLoading(false)
@@ -33,9 +34,9 @@ function DeletePost(props) {
 
     return (
         <div>
-            {loading && <Loading loading={loading}/>}
             {isDeleteWindow && 
             <Portal portalId="delete"> 
+                {loading && <Loading loading={loading}/>}
                 <div onClick={deleteWindowHandler} className={styles.windowContainer}>
                     <div className={styles.deleteWindow}>
                         <p className={styles.windowHeading}>Are you sure?</p>

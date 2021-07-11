@@ -9,6 +9,7 @@ const findOrCreate = require("mongoose-findorcreate")
 const passportLocalMongoose = require("passport-local-mongoose")
 const cors = require ("cors")
 const multer = require('multer')
+const fs = require('fs')
 require("dotenv").config()
 
 const app = express();
@@ -60,7 +61,6 @@ app.use(session({
   //   secure: true
   // },
   store: store
-
 }))
 
 app.use(passport.initialize())
@@ -277,6 +277,15 @@ app.get("/delete-post/:postId", function(req, res){
 
       userWithPosts.userPosts.map(post => {
         if(post._id == postId){
+          try{
+            const pathImg1 = post.images.image1.replace(process.env.REACT_APP_SERVER_URL, ".")
+            const pathImg2 = post.images.image2.replace(process.env.REACT_APP_SERVER_URL, ".")  
+            fs.unlinkSync(pathImg1)
+            fs.unlinkSync(pathImg2)
+          } catch(err){
+            console.log(err + "dellete error")
+          }
+
           Post.deleteOne({ _id: postId }, (err) => {
             if (!err){
               res.send("Post deleted")

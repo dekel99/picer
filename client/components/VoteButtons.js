@@ -10,17 +10,9 @@ function VoteButtons(props) {
     const [loading, setLoading] = useState(false)
 
     function sendVote(){
-        let imgVoted
         setLoading(true)
 
-        if (props.imgSwap){
-            imgVoted = "image2"
-        } else {
-            imgVoted = "image1"
-        }
-        
-
-        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/vote/" + props.postId + "/" + imgVoted, withCredentials: true})
+        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/vote/" + props.postId + "/" + props.imgChosen, withCredentials: true})
             .then(res => {  
                 setLoading(false)
                 if (res.data==="ok"){
@@ -40,10 +32,6 @@ function VoteButtons(props) {
         <div>            
             <Loading loading={loading} />
             <div className={styles.btnsContainer}>
-                <ButtonGroup disableElevation variant="contained" color="primary">
-                    <Button onClick={() => props.swap("1")}>One</Button>
-                    <Button onClick={() => props.swap("2")}>Two</Button>
-                </ButtonGroup>
                 <br/>
                 <br/>
                 <Button onClick={sendVote} style={{color: "white", borderRadius: "5px"}} variant="contained" color="primary">Vote!</Button>
