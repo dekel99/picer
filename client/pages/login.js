@@ -18,7 +18,7 @@ function login() {
             url: process.env.NEXT_PUBLIC_SERVER_URL + "/login",
             withCredentials: true,
             data: data
-        }).then(res =>{
+        }).then(res =>{ console.log(res)
             if (res.data==="ok"){
                 window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
             } else {

@@ -1,0 +1,30 @@
+
+
+@media (max-aspect-ratio: 1/1), (max-width: 800px) {
+    .scroller {
+        height: 45px;
+        width: 45px;
+        background: rgba(219, 221, 223, 0.342);
+        border-radius: 50%;
+        box-shadow: 0 8px 10px 0 rgba(156, 156, 165, 0.37);
+        backdrop-filter: blur( 1px );
+        -webkit-backdrop-filter: blur( 1px );
+        position: fixed;
+        bottom: 70px;
+        right: 10px;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    
+    .arrowIcon {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        /* width: 20px; */
+        height: 27px;
+        margin: auto;
+        z-index: 1000;
+    }
+  }

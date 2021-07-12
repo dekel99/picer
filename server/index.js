@@ -9,7 +9,8 @@ const findOrCreate = require("mongoose-findorcreate")
 const passportLocalMongoose = require("passport-local-mongoose")
 const cors = require ("cors")
 const multer = require('multer')
-const fs = require('fs')
+const fs = require('fs');
+// const { NONAME } = require("dns");
 require("dotenv").config()
 
 const app = express();
@@ -23,14 +24,12 @@ const store = new MongoDBStore({
 })
   
 // CORS header config **
-
 // app.use((req, res, next) => {
-//       res.setHeader("Access-Control-Allow-Origin", procces.env,REACT_APP_FRONT_URL + "/register")
-//       res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+//       res.setHeader("Access-Control-Allow-Origin", process.env.REACT_APP_FRONT_URL)
+//       res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 //       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
 //       next()
 //   })
-    
 
 const storage = multer.diskStorage({
   destination: function(request, file, callback){ // Define file destenation 
@@ -57,9 +56,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   proxy: true,
-  // cookie: {
-  //   secure: true
-  // },
+  cookie: process.env.production ? {secure: true, sameSite: "none"} : null , 
   store: store
 }))
 
@@ -108,12 +105,12 @@ const Post = new mongoose.model("Post", postSchema)
 passport.use(new LocalStrategy(User.authenticate()))
 
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  return done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
   User.findById(id, function(err, user) {
-    done(err, user);
+    return done(err, user);
   });
 });
 //---------------------------------------------------------------------------------------
@@ -168,8 +165,11 @@ app.get("/posts", function(req, res){
           
           // Removes posts user allready voted for & and posts with post creator karma = 0 **
             newList.map((post, index) => {
+              console.log(req.user)
+              console.log(post.postCreator)
+
               if (post.votes){
-                if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false){
+                if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
                   delete newList[index]
                 }
               }
@@ -438,8 +438,9 @@ app.post("/post-upload", upload.array("file"), function(req, res){
       
       // Find users name and updates it with the post **
       User.find({username: req.user.username}, (err, foundUser) => {
-
+        console.log("test")
         try{
+          console.log(process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename)
           post = new Post({
             _id: new mongoose.Types.ObjectId(),
             name: foundUser[0].name,
@@ -471,7 +472,8 @@ app.post("/post-upload", upload.array("file"), function(req, res){
               res.send("ok") 
             }
           })
-        } catch {
+        } catch (err) {
+          console.log(err)
           res.send("Required fields are empty")
         }
       })
