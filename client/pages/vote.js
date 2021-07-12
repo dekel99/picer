@@ -7,6 +7,8 @@ import VoteWindow from '../components/VoteWindow'
 import styles from "../styles/vote.module.css"
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Karma from '../components/Karma'
+import Scroll from '../components/Scroll'
+
 
 function vote() {
 
@@ -64,6 +66,12 @@ function vote() {
         setVoteWinOpen(false)
     }
 
+
+    function scrollTop(){
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }
+
     return (
         <div>
             {error && <p>{error}</p>}
@@ -79,6 +87,7 @@ function vote() {
                 }
                 return(
                     <div className={styles.postContainer} onClick={openHandler} key={index}>
+                    <Scroll />
                         {checkIfVoted && 
                             <div className={styles.voted}>
                                 <div className={styles.checkIcon}>

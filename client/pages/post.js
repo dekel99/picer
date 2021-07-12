@@ -103,7 +103,7 @@ function post() {
                 <TextField onChange={(e) => {setDescription(e.target.value)}} fullWidth={true} multiline={true} rows="3" rowsMax="3" id="outlined-basic" type="title" label="Description" variant="outlined" />
             </div>
             <br/>
-            <Button onClick={sendPost} variant="outlined" color="primary">Post</Button>
+            <Button onClick={sendPost} style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Post</Button>
             {error && <p style={{color: "red"}}>{error}</p>}
         </div>
     )

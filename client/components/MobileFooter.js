@@ -40,7 +40,6 @@ export default function MobileFooter() {
         >
             <BottomNavigationAction onClick={() => router.push("/profile")} label="Profile" icon={<AccountCircleIcon style={{ fontSize: 32 }}/>} />
             <BottomNavigationAction onClick={() => router.push("/post")} label="Post" icon={<AddIcon style={{ fontSize: 32 }}/>} />
-            <BottomNavigationAction onClick={scrollTop} label="Up" icon={<ArrowUpwardIcon style={{ fontSize: 32 }}/>} />
             <BottomNavigationAction onClick={() => router.push("/vote")} label="Vote" icon={<HomeIcon style={{ fontSize: 32 }}/>} />
         </BottomNavigation>
     </div>
