@@ -2,8 +2,8 @@
     width: 100%;
     height: auto;
     min-width: 280px;
-    max-width: 400px;
-    max-height: 500px;
+    max-width: 100%;
+    max-height: 100%;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -17,6 +17,8 @@
     right: 0;
     top: -3px;
 }
+
+
 
 @media (min-aspect-ratio: 1/1), (min-width: 800px) {
     .voteImage{

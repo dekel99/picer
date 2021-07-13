@@ -165,8 +165,6 @@ app.get("/posts", function(req, res){
           
           // Removes posts user allready voted for & and posts with post creator karma = 0 **
             newList.map((post, index) => {
-              console.log(req.user)
-              console.log(post.postCreator)
 
               if (post.votes){
                 if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
@@ -438,7 +436,6 @@ app.post("/post-upload", upload.array("file"), function(req, res){
       
       // Find users name and updates it with the post **
       User.find({username: req.user.username}, (err, foundUser) => {
-        console.log("test")
         try{
           console.log(process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename)
           post = new Post({

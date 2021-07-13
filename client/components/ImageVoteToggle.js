@@ -106,10 +106,14 @@ export default function FullWidthTabs(props) {
             index={0} 
             dir={theme.direction}
             >
+            <div className={styles.imageContainer}>
             <img className={styles.voteImage} src={image1}/>
+            </div>
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
+              <div className={styles.imageContainer}>
               <img className={styles.voteImage} src={image2}/>
+              </div>
           </TabPanel>
 
       </SwipeableViews>
