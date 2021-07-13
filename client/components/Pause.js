@@ -13,7 +13,9 @@ function Pause(props) {
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/pause-toggle/" + postId, withCredentials: true})
             .then(res => {
                 setIsActive(!isActive)
-                console.log(res.data)
+            })
+            .catch(err => {
+                console.log(err)
             })
     }
 

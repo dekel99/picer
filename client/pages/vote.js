@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PostCard from "../components/PostCard"
 import LoadingSmall from '../components/LoadingSmall'
 import NotFound from '../components/NotFound'
+import ScrollUp from '../components/Scroll'
 import VoteWindow from '../components/VoteWindow'
 import styles from "../styles/vote.module.css"
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
@@ -75,6 +76,7 @@ function vote() {
     return (
         <div>
             {error && <p>{error}</p>}
+            <ScrollUp />
             <NotFound notFound={noPostsMessage} />
             <LoadingSmall loading={loading} regular={false} style={{marginTop: "200px"}}/>
             {postList && <Karma voteClicked={voteClicked} />}

@@ -5,13 +5,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import ImageVoteToggle from "./ImageVoteToggle"
 
 function VoteWindow(props) {
-    const [imgSwap, setImgSwap] = useState(false)
+    const [imgChosen, setImgChosen] = useState("image1")
 
-    function swap(imgNum){
-        if(imgNum==="1"){
-            setImgSwap(false)
-        } else {
-            setImgSwap(true)
+    function chosen(imgIndex){
+        if(imgIndex===0){
+            setImgChosen("image1")
+        } else{
+            setImgChosen("image2")
         } 
     }
 
@@ -26,12 +26,9 @@ function VoteWindow(props) {
                     <br/>
                     <h3>Wich picture is better?</h3>
                     <div className={styles.imageToggleContainer}>
-                        <ImageVoteToggle images={props.windowPost.images} />
+                        <ImageVoteToggle  chosen={chosen} images={props.windowPost.images} />
                     </div>
-                    {/* {imgSwap ? 
-                    <img className={styles.voteImage} src={props.windowPost.images.image2}/> :
-                    <img className={styles.voteImage} src={props.windowPost.images.image1}/>} */}
-                    <VoteButtons clicked={props.clicked} openHandler={props.openHandler} postIndex={props.postIndex} postId={props.windowPost._id} imgSwap={imgSwap} swap={swap}/>
+                    <VoteButtons clicked={props.clicked} openHandler={props.openHandler} postIndex={props.postIndex} postId={props.windowPost._id} imgChosen={imgChosen}/>
                 </div> 
             </div>}
         </div>
