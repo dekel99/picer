@@ -31,6 +31,7 @@ const store = new MongoDBStore({
 //       next()
 //   })
 
+
 const storage = multer.diskStorage({
   destination: function(request, file, callback){ // Define file destenation 
     callback(null, "./public/uploads")
@@ -56,7 +57,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   proxy: true,
-  cookie: process.env.production ? {secure: true, sameSite: "none"} : null , 
+  cookie: process.env.production ? {secure: true, httpOnly: true, sameSite: "none"} : null , 
   store: store
 }))
 

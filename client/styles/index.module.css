@@ -21,7 +21,7 @@
   padding: 10px;
 }
 
-@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+@media (min-aspect-ratio: 1.5/1), (min-width: 800px) {
   .mainImg{
     margin-top: 40px; 
     max-width: 600px; 

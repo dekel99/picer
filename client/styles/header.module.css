@@ -27,7 +27,7 @@
     display: inline;
 }
 
-@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+@media (min-aspect-ratio: 1.5/1), (min-width: 800px) {
     .drawerContainer{
         display: none;
     }

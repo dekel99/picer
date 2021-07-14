@@ -2,9 +2,10 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
+    z-index: 105;
   }
   
-  @media (min-aspect-ratio: 1/1), (min-width: 800px) {
+  @media (min-aspect-ratio: 1.5/1), (min-width: 800px) {
     .mobileFooter{
         display: none;
     }
