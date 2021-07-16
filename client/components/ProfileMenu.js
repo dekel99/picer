@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileSettings from '../components/ProfileSettings';
+import Tutorial from './Tutorial';
 import UserPosts from '../components/UserPosts';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
@@ -78,7 +79,7 @@ export default function FullWidthTabs(props) {
                 >
                 <Tab label="Account" {...a11yProps(0)} />
                 <Tab label="My Posts" {...a11yProps(1)} />
-                <Tab label="Test" {...a11yProps(2)} />
+                <Tab label="Tutorial" {...a11yProps(2)} />
                 </Tabs>
             </AppBar>
         </div>
@@ -88,13 +89,13 @@ export default function FullWidthTabs(props) {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-            <ProfileSettings name={props.name}/>
+          <ProfileSettings name={props.name}/>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-            <UserPosts />
+          <UserPosts />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          Item Three
+          <Tutorial/>
         </TabPanel>
       </SwipeableViews>
     </div>

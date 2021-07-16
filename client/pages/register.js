@@ -47,6 +47,7 @@ function register() {
             })
                 .then(res => {
                     if(res.data.success){
+                        localStorage.setItem("showTutorial", true)
                         window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
                     } else {
                         setRegisterErr(res.data.message)

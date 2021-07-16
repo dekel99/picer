@@ -23,18 +23,19 @@
     right: 0;
     left: 0;
     border-radius: 5px;
-    z-index: 100;
+    z-index: 2000;
+    animation: make-voting-card 0.3s ease;
+    animation-fill-mode: both;
 }
 
-/* .voteImage{
-    width: 100%;
-    height: auto;
-    max-height: 60vh;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    object-fit: cover;
-} */
+@keyframes make-voting-card {
+    from {
+        transform: scale(0.3);
+      }
+      to {
+        transform: scale(1);
+      }
+}
 
 .quitVoteWindow {
     position: absolute;

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PostCard from "../components/PostCard"
 import LoadingSmall from '../components/LoadingSmall'
 import NotFound from '../components/NotFound'
+import Tutorial from '../components/Tutorial'
 import ScrollUp from '../components/Scroll'
 import VoteWindow from '../components/VoteWindow'
 import styles from "../styles/vote.module.css"
@@ -19,6 +20,17 @@ function vote() {
     const [voteClicked, setVoteClicked] = useState(false)
     const [noPostsMessage, setNoPostsMessage] = useState(false)
     const [error, setError] = useState()
+    let showTutorial = false
+
+    try {
+        if(localStorage.getItem("showTutorial")=="true"){
+            showTutorial = true
+        } else {
+            showTutorial = false
+        }
+    } catch(err) {
+        console.log(err)
+    }
 
     // Checks if user is auth and render list of posts
     useEffect(() => {
@@ -68,6 +80,7 @@ function vote() {
     return (
         <div>
             {error && <p>{error}</p>}
+            {showTutorial && <Tutorial />}
             <ScrollUp />
             <NotFound notFound={noPostsMessage} />
             <LoadingSmall loading={loading} regular={false} style={{marginTop: "200px"}}/>

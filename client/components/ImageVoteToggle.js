@@ -97,11 +97,6 @@ export default function FullWidthTabs(props) {
         onChangeIndex={handleChangeIndex}
       >
           <TabPanel 
-            // inputProps={{
-            //   MuiBox: {
-            //     padding: "0"
-            //   }
-            // }} 
             value={value} 
             index={0} 
             dir={theme.direction}

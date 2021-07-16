@@ -166,9 +166,6 @@ app.get("/posts", function(req, res){
           
           // Removes posts user allready voted for & and posts with post creator karma = 0 **
             newList.map((post, index) => {
-              console.log(req.user)
-              console.log(post.postCreator)
-
               if (post.votes){
                 if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
                   delete newList[index]
@@ -278,15 +275,6 @@ app.get("/delete-post/:postId", function(req, res){
 
       userWithPosts.userPosts.map(post => {
         if(post._id == postId){
-          try{
-            const pathImg1 = post.images.image1.replace(process.env.REACT_APP_SERVER_URL, ".")
-            const pathImg2 = post.images.image2.replace(process.env.REACT_APP_SERVER_URL, ".")  
-            fs.unlinkSync(pathImg1)
-            fs.unlinkSync(pathImg2)
-          } catch(err){
-            console.log(err + "dellete error")
-          }
-
           Post.deleteOne({ _id: postId }, (err) => {
             if (!err){
               res.send("Post deleted")
@@ -431,6 +419,8 @@ app.post("/login", function(req, res){
 app.post("/post-upload", upload.array("file"), function(req, res){
     // req.files, req.body.title, req.body.description
 
+    console.log(req.body)
+
     if(req.isAuthenticated()){
       const time = new Date().toLocaleTimeString("en-GB", {
         hour: "2-digit",
@@ -439,9 +429,7 @@ app.post("/post-upload", upload.array("file"), function(req, res){
       
       // Find users name and updates it with the post **
       User.find({username: req.user.username}, (err, foundUser) => {
-        console.log("test")
         try{
-          console.log(process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename)
           post = new Post({
             _id: new mongoose.Types.ObjectId(),
             name: foundUser[0].name,
@@ -449,8 +437,8 @@ app.post("/post-upload", upload.array("file"), function(req, res){
             description: req.body.description === "undefined" ? "" : req.body.description,
             time: time,
             images: {
-              image1: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[0].filename,
-              image2: process.env.REACT_APP_SERVER_URL + "/public/uploads/" + req.files[1].filename
+              image1: req.body.urlImage1,
+              image2: req.body.urlImage2
             },
             votes: {image1: [], image2: []},
             active: true,
