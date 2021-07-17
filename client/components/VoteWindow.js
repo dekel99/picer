@@ -28,11 +28,7 @@ function VoteWindow(props) {
                     <div className={styles.imageToggleContainer}>
                         <ImageVoteToggle  chosen={chosen} images={props.windowPost.images} />
                     </div>
-                    <VoteButtons clicked={props.clicked}
-                     openHandler={props.openHandler}
-                      postIndex={props.postIndex}
-                       postId={props.windowPost._id}
-                        imgChosen={imgChosen}/>
+                    <VoteButtons clicked={props.clicked} openHandler={props.openHandler} postIndex={props.postIndex} postId={props.windowPost._id} imgChosen={imgChosen}/>
                 </div> 
             </div>}
         </div>

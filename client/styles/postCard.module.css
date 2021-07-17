@@ -55,8 +55,8 @@
 .image2{
     width: 50vw;
     height: 50vw;
-    background-size: cover;
-    background-repeat: no-repeat;
+    /* background-size: cover; */
+    /* background-repeat: no-repeat; */
     background-position: center;
     object-fit: cover;
 }
@@ -86,7 +86,7 @@
 }
 
 
-@media (min-aspect-ratio: 1/1), (min-width: 800px) {
+@media (min-aspect-ratio: 1.5/1), (min-width: 800px) {
     .image1{
         width: 50%;
         height: 100%;

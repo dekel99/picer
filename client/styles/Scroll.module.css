@@ -16,7 +16,18 @@
         z-index: 1000;
         animation: slide-up 1.2s ease;
         animation-fill-mode: both;
-        animation-delay: 0.8s;
+        animation-delay: 0.5s;
+    }
+    
+    .arrowIcon {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 27px;
+        margin: auto;
+        z-index: 1000;
     }
 
     @keyframes slide-up {
@@ -49,16 +60,4 @@
             opacity: 0.9;
         }
     }
-    
-    .arrowIcon {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        /* width: 20px; */
-        height: 27px;
-        margin: auto;
-        z-index: 1000;
-    }
-  }
+}

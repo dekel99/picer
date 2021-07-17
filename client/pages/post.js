@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ImageCropper from "../components/ImageCropper"
 import styles from "../styles/post.module.css"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
@@ -16,10 +17,32 @@ function post() {
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
     const [loading, setLoading] = useState(false)
+    const [cropWindow, setCropWindow] = useState(false)
     const [error, setError] = useState()
     const router = useRouter()
 
     try {var reader = new window.FileReader()} catch{}
+
+    function croppedImageResults(croppedImg){
+        var xhr = new XMLHttpRequest;
+        xhr.responseType = 'blob';
+        
+        xhr.onload = function() {
+            var recoveredBlob = xhr.response;
+        
+            reader.onload = function() {
+                image2 ? setImage2(reader.result) : setImage1(reader.result)
+            };
+        
+            reader.readAsDataURL(recoveredBlob);
+        };
+        
+        console.log(croppedImg)
+        xhr.open('GET', croppedImg);
+        xhr.send();
+
+        setCropWindow(false)
+    }
     
     // Update img file in client when pick img from device **
     function fileChange(e){
@@ -36,9 +59,11 @@ function post() {
                 if (image1){
                     formFile2 = fileVar
                     setImage2(reader.result)
+                    setCropWindow(true)
                 } else {
                     formFile1 = fileVar
                     setImage1(reader.result)
+                    setCropWindow(true)
                 }
             }
         }     
@@ -47,29 +72,51 @@ function post() {
     function sendPost(){
         setLoading(true)
         const data = new FormData() 
+        data.append("file", image1)
+        data.append("upload_preset", "hpuuk4oa")
 
-        data.append("file", formFile1)
-        data.append("file", formFile2)
-        data.append("title", title)
-        data.append("description", description)
+        axios.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data)
+            .then(res => {
+                if(res.statusText==="OK"){
+                    const urlImage1 = res.data.secure_url
+                    const data = new FormData() 
+                    data.append("file", image2)
+                    data.append("upload_preset", "hpuuk4oa")
 
-        axios({method: "POST", url: process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", withCredentials: true , data: data})
-            .then(res=> {
-                if (res.data==="ok"){
-                    setLoading(false)
-                    router.push("/vote")
+                    axios.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data)
+                        .then(res => {
+                            if(res.statusText==="OK"){
+                                const urlImage2 = res.data.secure_url
+                                const postData = {title, description, urlImage1, urlImage2}
+                        
+                                axios({method: "POST", url: process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", withCredentials: true , data: postData})
+                                    .then(res=> {
+                                        if (res.data==="ok"){
+                                            setLoading(false)
+                                            router.push("/vote")
+                                        } else {
+                                            throw Error (res.data)
+                                        }
+                                    }).catch(err => {
+                                        setError(err.message)
+                                        setLoading(false)
+                                    })
+                            } else {
+                                setError("Error ocurred while uploading")
+                                setLoading(false)
+                            }
+                        }).catch(err => console.log(err))
                 } else {
-                    throw Error (res.data)
+                    setError("Error ocurred while uploading")
+                    setLoading(false)
                 }
-            }).catch(err => {
-                setError(err.message)
-                setLoading(false)
-            })
+            }).catch(err => console.log(err))
+
     }
 
     return (
         <div>
-
+            {cropWindow && <ImageCropper croppedImageResults={croppedImageResults} image={image2 ? image2 : image1}/>}
             <Loading loading={loading}/>
 
             <div className={styles.uploadsContainer}>
@@ -103,7 +150,7 @@ function post() {
                 <TextField onChange={(e) => {setDescription(e.target.value)}} fullWidth={true} multiline={true} rows="3" rowsMax="3" id="outlined-basic" type="title" label="Description" variant="outlined" />
             </div>
             <br/>
-            <Button onClick={sendPost} style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Post</Button>
+            <Button onClick={sendPost} variant="outlined" color="primary">Post</Button>
             {error && <p style={{color: "red"}}>{error}</p>}
         </div>
     )
