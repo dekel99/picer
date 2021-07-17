@@ -165,14 +165,14 @@ app.get("/posts", function(req, res){
           let newList = postListWithUser
           
           // Removes posts user allready voted for & and posts with post creator karma = 0 **
-            newList.map((post, index) => {
-              if (post.votes){
-                if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
-                  delete newList[index]
-                }
-              }
-            })
-            newList = newList.filter(Boolean) // Removes undefined elements from array
+            // newList.map((post, index) => {
+            //   if (post.votes){
+            //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
+            //       delete newList[index]
+            //     }
+            //   }
+            // })
+            // newList = newList.filter(Boolean) // Removes undefined elements from array
             res.json({success: true, newList: newList})
         })
   } else {
@@ -418,8 +418,6 @@ app.post("/login", function(req, res){
 
 app.post("/post-upload", upload.array("file"), function(req, res){
     // req.files, req.body.title, req.body.description
-
-    console.log(req.body)
 
     if(req.isAuthenticated()){
       const time = new Date().toLocaleTimeString("en-GB", {

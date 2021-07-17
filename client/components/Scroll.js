@@ -13,17 +13,20 @@ export default function Scroll(props) {
   }
 
   useEffect(function onFirstMount() {
+    let isMounted = true;
     let oldValue = 0
     let newValue = 0
 
     window.addEventListener('scroll', () => {
     newValue = window.pageYOffset;
-        setScrollUpBtn(false)
-        if (newValue > 70) {
-          setScrollUpBtn(true)
-        } 
-        oldValue = newValue;
-        });
+      setScrollUpBtn(false)
+      if (newValue > 70 && isMounted) {
+        setScrollUpBtn(true)
+      } 
+      oldValue = newValue;
+      });
+
+    return () => { isMounted = false }
   }, []);
 
   return (

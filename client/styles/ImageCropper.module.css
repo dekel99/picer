@@ -7,11 +7,17 @@
     z-index: 1000;
 }
 
-
 .cropContainer{
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 80px;
+}
+
+.btnContainer{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100px;
 }

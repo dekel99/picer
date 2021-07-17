@@ -1,28 +1,27 @@
 import React, { useState } from 'react'
 import ImageCropper from "../components/ImageCropper"
-import styles from "../styles/post.module.css"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
+import DropMenu from '../components/DropMenu';
 import axios from 'axios';
 import {useRouter} from 'next/router'
 import Loading from '../components/Loading';
-
-var formFile1 = ""
-var formFile2 = ""
+import styles from "../styles/post.module.css"
 
 function post() {
 
-    const [title, setTitle] = useState()
+    const [title, setTitle] = useState("Overall best picture")
     const [description, setDescription] = useState()
     const [image1, setImage1] = useState()
     const [image2, setImage2] = useState()
     const [loading, setLoading] = useState(false)
     const [cropWindow, setCropWindow] = useState(false)
     const [error, setError] = useState()
-    const router = useRouter()
 
+    const router = useRouter()
     try {var reader = new window.FileReader()} catch{}
 
+    // Triggers when cropped image choose, convert blobUrl to base64
     function croppedImageResults(croppedImg){
         var xhr = new XMLHttpRequest;
         xhr.responseType = 'blob';
@@ -37,7 +36,6 @@ function post() {
             reader.readAsDataURL(recoveredBlob);
         };
         
-        console.log(croppedImg)
         xhr.open('GET', croppedImg);
         xhr.send();
 
@@ -49,7 +47,6 @@ function post() {
 
         if (e.target.files[0]){
             const fileVar = e.target.files[0]
-            const fileName = fileVar.name
     
             if (fileVar.type.match('image.*')) {
               reader.readAsDataURL(fileVar);
@@ -57,11 +54,9 @@ function post() {
 
             reader.onload = function(e) {
                 if (image1){
-                    formFile2 = fileVar
                     setImage2(reader.result)
                     setCropWindow(true)
                 } else {
-                    formFile1 = fileVar
                     setImage1(reader.result)
                     setCropWindow(true)
                 }
@@ -114,6 +109,10 @@ function post() {
 
     }
 
+    function voteFor(item){
+        setTitle(item)
+    }
+
     return (
         <div>
             {cropWindow && <ImageCropper croppedImageResults={croppedImageResults} image={image2 ? image2 : image1}/>}
@@ -142,12 +141,12 @@ function post() {
             <br/>
             
             <div className={styles.inputsContainer}>
-                <label>Post title: </label>
-                <TextField onChange={(e) => {setTitle(e.target.value)}} fullWidth={true} id="outlined-basic" type="title" label="Title" variant="outlined" />
+                <p style={{marginBottom: "10px"}}>People will vote for: </p>
+
+                <DropMenu voteFor={voteFor} />
                 <br/>
-                <br/>
-                <label>Post description: </label>
-                <TextField onChange={(e) => {setDescription(e.target.value)}} fullWidth={true} multiline={true} rows="3" rowsMax="3" id="outlined-basic" type="title" label="Description" variant="outlined" />
+                <p style={{margin: "10px"}}>Add a note (optional)</p>
+                <TextField onChange={(e) => {setDescription(e.target.value)}} fullWidth={true} multiline={true} rows="3" rowsMax="3" id="outlined-basic" type="title" label="For example: Wich hat look better?" variant="outlined" />
             </div>
             <br/>
             <Button onClick={sendPost} variant="outlined" color="primary">Post</Button>

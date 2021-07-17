@@ -8,6 +8,7 @@ export default class MyDocument extends Document {
       <Html lang='en'>
         <Head/>
         <body>
+          <div id="loading"/>
           <div id="cropper"/>
           <div id="delete"/>
           <div id="tutorial"/>
