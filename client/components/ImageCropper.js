@@ -2,10 +2,13 @@ import React, { useCallback, useState } from 'react'
 import Portal from "../components/Portal"
 import Cropper from 'react-easy-crop'
 import getCroppedImg from '../components/cropImage'
+import {Button} from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import styles from "../styles/ImageCropper.module.css"
 
 function ImageCropper(props) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [loading, setLoading] = useState(false)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
     const [croppedImage, setCroppedImage] = useState(null)
 
@@ -14,19 +17,15 @@ function ImageCropper(props) {
       }, [])
 
     const passCroppedImg = useCallback(async () => {
-      try {
-        const croppedImage = await getCroppedImg(
-          props.image,
-          croppedAreaPixels,
-        )
-        console.log('done', { croppedImage })
-        props.croppedImageResults(croppedImage)
-        setCroppedImage(croppedImage)
-      } catch (e) {
-        console.error(e)
-      }
+      setLoading(true)
+        try {
+          const croppedImage = await getCroppedImg(props.image,croppedAreaPixels)
+          props.croppedImageResults(croppedImage)
+        } catch (e) {
+          console.error(e)
+        }
+        
     }, [croppedAreaPixels])
-
 
     return (
       <div style={{position: "relative"}}>
@@ -40,7 +39,10 @@ function ImageCropper(props) {
                           onCropChange={setCrop}
                           onCropComplete={onCropComplete}
                       />
-                      <button style={{position: "absolute"}} onClick={passCroppedImg}>OK</button>
+                  </div>
+                  <div className={styles.btnContainer}>
+                    <Button disabled={loading} onClick={passCroppedImg} variant="contained" color="primary" size="large">ok</Button>
+                    {loading && <CircularProgress style={{position: "absolute", left: "0", right: "0", margin: "auto", top: "6px"}} size={30} />}
                   </div>
               </div>
           </Portal>

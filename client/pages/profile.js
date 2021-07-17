@@ -9,9 +9,10 @@ function profile() {
     const [name, setName] = useState()
 
     useEffect(() => {
+        let isMounted = true;
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-name", withCredentials: true})
             .then(res => {
-                if (res.data){
+                if (res.data && isMounted){
                     setName(res.data)
                 }
             })
@@ -23,6 +24,8 @@ function profile() {
             }
         })
         .catch(err => console.log(err))
+
+        return () => { isMounted = false }
     }, [])
 
     return (

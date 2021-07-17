@@ -6,9 +6,10 @@ function Karma(props) {
     const [karma, setKarma] = useState()
 
     useEffect(() => {
+        let isMounted = true;
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-karma", withCredentials: true})
             .then(res => {
-                if(res.data){
+                if(res.data && isMounted){
                     if (res.data.karma == 0) {
                         setKarma()
                     } else if (res.data.karma > 0 && res.data.karma <= 15){
@@ -20,6 +21,8 @@ function Karma(props) {
                     }
                 }
             })       
+
+        return () => { isMounted = false }
     }, [props.voteClicked])
 
     return (

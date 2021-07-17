@@ -11,7 +11,6 @@ function PostCard(props) {
     const [votesUpdate, setVotesUpdate] = useState()
     const {name, images, title, description, time, votes, index, postId, voteClicked, deletePost, active, loadMyPosts} = props
 
-    
     if(voteClicked){
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/get-results/" + postId , withCredentials:true})
         .then(res => {
@@ -45,8 +44,8 @@ function PostCard(props) {
                             <img className={styles.image2} src={images.image2} alt={index}></img>
                         </div>
 
-                        <p className={styles.title}>{title}</p>
-                        <p className={styles.description}>{description}</p>
+                        {title && <p className={styles.title}><span style={{fontWeight: "700"}}>Vote for:</span> {title}</p>}
+                        {description && <p className={styles.description}><span style={{fontWeight: "700"}}>Note:</span> {description}</p>}
                         <p className={styles.time}>{time}</p>
                         {votes ? <VoteResult votes={votes} /> : votesUpdate && <VoteResult votes={votesUpdate} />}
                     </div>

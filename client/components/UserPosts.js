@@ -4,35 +4,39 @@ import PostCard from './PostCard'
 import LoadingSmall from "./LoadingSmall"
 
 function UserPosts() {
-
     const [loading, setLoading] = useState(false)
     const [userPosts, setUserPosts] = useState()
+    const [reload, setReload] = useState(false)
     const [err, setErr] = useState()
 
-    function loadMyPosts(){
+    useEffect(() => {
+        let isMounted = true;
         setUserPosts()
         setLoading(true)
         axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/user-posts", withCredentials: true})
             .then(res => { 
-                setLoading(false)
-                
-                if (res.data[0]){
-                    setUserPosts(res.data)
-                } else if(res.data===[]){
-                    console.log("array is empty")
-                } else {
-                    throw Error (res.data)
-                } 
+                if(isMounted){
+                    setLoading(false)
+                    if (res.data[0] && isMounted){
+                        setUserPosts(res.data)
+                    } else if(res.data===[]){
+                        console.log("array is empty")
+                    } else {
+                        throw Error (res.data)
+                    } 
+                }
             })
             .catch(err => {
                 setErr(err.message)
+                setLoading(false)
             })
-    }
 
-    useEffect(() => {
-        loadMyPosts()
-    }, [])
-    
+        return () => { isMounted = false }
+    }, [reload])
+
+    function loadMyPosts(){
+        setReload(!reload)
+    }
 
     return(
         <div>

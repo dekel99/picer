@@ -34,11 +34,12 @@ function vote() {
 
     // Checks if user is auth and render list of posts
     useEffect(() => {
+        let isMounted = true;
         setLoading(true)
         localStorage.setItem("votedList", "")
         axios({mothed: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/posts", withCredentials: true})
             .then(res => {
-                if (res.data.success){
+                if (res.data.success && isMounted){
                     if(res.data.newList.length!==0){
                         setLoading(false)
                         setPostList(res.data.newList)
@@ -54,6 +55,7 @@ function vote() {
                 setError(err.message)
                 setLoading(false)
             })
+        return () => { isMounted = false }
     }, [])
 
     // Triger when user votes **
