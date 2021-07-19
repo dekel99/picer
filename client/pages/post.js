@@ -47,6 +47,8 @@ function post() {
 
         if (e.target.files[0]){
             const fileVar = e.target.files[0]
+
+            console.log(fileVar.type);
     
             if (fileVar.type.match('image.*')) {
               reader.readAsDataURL(fileVar);
