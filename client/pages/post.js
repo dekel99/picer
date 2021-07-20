@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ImageCropper from "../components/ImageCropper"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import DropMenu from '../components/DropMenu';
 import axios from 'axios';
+// import heic2any from "heic2any"
 import {useRouter} from 'next/router'
 import Loading from '../components/Loading';
 import styles from "../styles/post.module.css"
@@ -21,6 +22,7 @@ function post() {
     const router = useRouter()
     try {var reader = new window.FileReader()} catch{}
 
+
     // Triggers when cropped image choose, convert blobUrl to base64
     function croppedImageResults(croppedImg){
         var xhr = new XMLHttpRequest;
@@ -28,7 +30,8 @@ function post() {
         
         xhr.onload = function() {
             var recoveredBlob = xhr.response;
-        
+            // console.log(recoveredBlob)
+
             reader.onload = function() {
                 image2 ? setImage2(reader.result) : setImage1(reader.result)
             };
@@ -44,12 +47,24 @@ function post() {
     
     // Update img file in client when pick img from device **
     function fileChange(e){
-
         if (e.target.files[0]){
             const fileVar = e.target.files[0]
-    
+
+            if(fileVar.name.endsWith(".heic")){
+                const heic2any = require('heic2any')
+
+                const objectURL = URL.createObjectURL(fileVar)
+
+                fetch(objectURL)
+                    .then((res) => res.blob())
+                    .then((blob) => heic2any({ blob }))
+                    .then((conversionResult) => {
+                        reader.readAsDataURL(conversionResult)
+                    })
+            }
+                
             if (fileVar.type.match('image.*')) {
-              reader.readAsDataURL(fileVar);
+                reader.readAsDataURL(fileVar);
             }
 
             reader.onload = function(e) {
