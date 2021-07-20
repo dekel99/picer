@@ -8,6 +8,7 @@ import styles from "../styles/ImageCropper.module.css"
 
 function ImageCropper(props) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
     const [loading, setLoading] = useState(false)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
     const [croppedImage, setCroppedImage] = useState(null)
@@ -35,9 +36,11 @@ function ImageCropper(props) {
                       <Cropper
                           image={props.image}
                           crop={crop}
+                          zoom={zoom}
                           aspect={1 / 1}
                           onCropChange={setCrop}
                           onCropComplete={onCropComplete}
+                          onZoomChange={setZoom}
                       />
                   </div>
                   <div className={styles.btnContainer}>

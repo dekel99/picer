@@ -47,7 +47,7 @@ function Tutorial() {
                                 :
                                     null}
                         </div>
-                        <p onClick={() => setPage(page+1)} className={styles.nextBtn}>Next</p>
+                        <p onClick={() => setPage(page+1)} className={styles.nextBtn}>{page===3 ? "got it!" : "next"}</p>
                     </div>
                 </div>}
         </Portal>
