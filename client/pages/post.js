@@ -50,9 +50,8 @@ function post() {
         if (e.target.files[0]){
             const fileVar = e.target.files[0]
 
-            if(fileVar.name.endsWith(".heic")){
+            if(fileVar.name.endsWith(".heic") || fileVar.name.endsWith(".HEIC") || fileVar.name.endsWith(".HEIF") || fileVar.name.endsWith(".heif")){
                 const heic2any = require('heic2any')
-
                 const objectURL = URL.createObjectURL(fileVar)
 
                 fetch(objectURL)
@@ -64,6 +63,7 @@ function post() {
             }
                 
             if (fileVar.type.match('image.*')) {
+                console.log(fileVar.type)
                 reader.readAsDataURL(fileVar);
             }
 
