@@ -17,7 +17,7 @@
     "next": "10.2.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-easy-crop": "^3.5.2",
+    "react-easy-crop": "^3.5.3",
     "react-swipeable-views": "^0.14.0"
   }
 }
