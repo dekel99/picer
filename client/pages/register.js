@@ -81,7 +81,7 @@ function register() {
                 </div>
 
                 <Button onClick={registerUser} style={{color: "#512B58", borderRadius: "8px"}} variant="outlined" color="primary">Register</Button>
-                <p>Already have an acount? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
+                <p>Already have an account? <Link href="/login"><a className={styles.registerLink}>Login</a></Link></p>
             </form>
             
         </div>

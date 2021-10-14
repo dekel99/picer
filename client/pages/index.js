@@ -6,13 +6,20 @@ import LoadingSmall from '../components/LoadingSmall'
 
 const img = "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzd8fHBob3RvZ3JhcGh5fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"
 const text = "With picer you can easily find which one from two pictures is the best for your specific need! just upload two images and decide on which criterion the community should base their votes."
+let firstLoad = true
 
 export default function Main() {
   const [isAuth, setIsAuth] = useState()
   const [error, setError] = useState()
 
+  setTimeout(() => {
+    firstLoad = false
+    
+  }, 2000);
   useEffect(() => {
-    CheckAuth().then(res => setIsAuth(res)).catch(err => setError(err.message))
+    CheckAuth().then(res => { 
+      setIsAuth(res)
+    }).catch(err => setError(err.message))
   }, [])
 
   if (isAuth===true){
@@ -29,6 +36,6 @@ export default function Main() {
   } else if (error){
     return <p>{error}</p>
   } else { 
-    return <div style={{marginTop: "50px"}}>Waiting for server, please refresh in few seconds <LoadingSmall loading={true}/></div>
+    return firstLoad ? <div style={{marginTop: "50px"}}>Waiting for server, please refresh in few seconds <LoadingSmall loading={true}/></div> : null
   }
 }
