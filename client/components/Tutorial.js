@@ -33,7 +33,7 @@ function Tutorial() {
                                 page===2 ?
                                     <div>
                                         <p>After uploading a post people can vote for it as long as your karma bar isn't empty!</p>
-                                        <img src="https://res.cloudinary.com/ddijwyj2m/image/upload/v1626293430/assets/gjysmlraucqgepd3f9d1.jpg"/>
+                                        <img style={{height: "auto", width:"80px"}} src="https://res.cloudinary.com/ddijwyj2m/image/upload/c_scale,w_80/v1626293430/assets/gjysmlraucqgepd3f9d1.jpg"/>
                                         <p>You can follow your karma in the votes page.</p>
                                         <br/>
                                         <p>To get more karma just vote for others!</p>
@@ -42,7 +42,7 @@ function Tutorial() {
                                 page===3 ?
                                     <div>
                                         <p>You can see your posts resualts in:<br/> Profile {'>'} My posts</p>
-                                        <img style={{width: "auto", height: "300px", border: "solid", borderWidth: "1px"}} src="https://res.cloudinary.com/ddijwyj2m/image/upload/v1626295210/assets/n2zubdgywnkzxsmxi5jr.jpg"/>
+                                        <img style={{border: "solid", borderWidth: "1px"}} src="https://res.cloudinary.com/ddijwyj2m/image/upload/c_scale,h_300/v1626295210/assets/n2zubdgywnkzxsmxi5jr.jpg"/>
                                     </div>
                                 :
                                     null}

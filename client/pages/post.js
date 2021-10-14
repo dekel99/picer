@@ -50,6 +50,7 @@ function post() {
         if (e.target.files[0]){
             const fileVar = e.target.files[0]
 
+            // convert file to png if its in iphone formats
             if(fileVar.name.endsWith(".heic") || fileVar.name.endsWith(".HEIC") || fileVar.name.endsWith(".HEIF") || fileVar.name.endsWith(".heif")){
                 const heic2any = require('heic2any')
                 const objectURL = URL.createObjectURL(fileVar)
