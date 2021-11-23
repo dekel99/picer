@@ -14,8 +14,8 @@ export default function Main() {
 
   setTimeout(() => {
     firstLoad = false
-    
   }, 2000);
+  
   useEffect(() => {
     CheckAuth().then(res => { 
       setIsAuth(res)
