@@ -8,9 +8,6 @@ const LocalStrategy = require("passport-local")
 const findOrCreate = require("mongoose-findorcreate")
 const passportLocalMongoose = require("passport-local-mongoose")
 const cors = require ("cors")
-const multer = require('multer')
-const fs = require('fs');
-// const { NONAME } = require("dns");
 require("dotenv").config()
 
 const app = express();
@@ -30,24 +27,6 @@ const store = new MongoDBStore({
 //       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
 //       next()
 //   })
-
-
-const storage = multer.diskStorage({
-  destination: function(request, file, callback){ // Define file destenation 
-    callback(null, "./public/uploads")
-  },
-  filename: function(request, file, callback){ // Define file name
-    callback(null, Date.now() + file.originalname)
-  }
-})
-    
-const upload = multer({
-  storage: storage,
-  limit:{
-    fieldSize: 1024*1024*3
-  }
-})
-
 
 //--------------------------------PASSPORT + MONGOOSE CONFIG------------------------------
 // Save session **
@@ -356,6 +335,16 @@ app.get("/public/uploads/:picId", function(req, res){
 })
 
 //------------------------------------POST ROUTS---------------------------------------
+
+app.post("/jwt", async function(req, res){
+  const { password, confirm, name, username } = req.body
+  if (!name || !password || !username) return res.json({success:false, message: "Required fields are missing"})
+  if (password !== confirm) return res.json({success:false, message: "Passwords not match"})
+
+  const emailExist = await User.findOne({username})
+  if (!emailExist)
+  res.send(emailExist)
+})
 
 app.post("/register", function(req, res){
   const { password, confirm, name, username } = req.body
