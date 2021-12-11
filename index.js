@@ -23,13 +23,19 @@ const store = new MongoDBStore({
   collection: "sessions"
 })
   
-// CORS header config **
-// app.use((req, res, next) => {
-//       res.setHeader("Access-Control-Allow-Origin", process.env.REACT_APP_FRONT_URL)
-//       res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-//       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
-//       next()
-//   })
+// ----------------------------------Check auth -------------------------------------------
+function authToken(req, res, next){
+  const authHeader = req.headers["authorization"]
+  const token = authHeader && authHeader.split(" ")[1]
+  if(!token) return res.json({success: false, message:"Please login and try again"})
+
+  jwt.verify(token, tokenSecret, (err, user) => {
+    if (err) return res.json({success: false, message:"Please login and try again"})
+    if (!req.user) req.user = {}
+    req.user.username = user
+    next()
+  })
+}
 
 //--------------------------------PASSPORT + MONGOOSE CONFIG------------------------------
 // Save session **
@@ -138,28 +144,23 @@ app.get("/", function(req, res){
 })
 
 app.get("/posts", authToken, function(req, res){
-  // if(req.isAuthenticated()){
-
-    Post.find((err, postList) =>{}).
-      populate('postCreator').
-        exec(function (err, postListWithUser) {
-          if (err) return handleError(err);
-          let newList = postListWithUser
-          
-          // Removes posts user allready voted for & and posts with post creator karma = 0 **
-            // newList.map((post, index) => {
-            //   if (post.votes){
-            //     if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
-            //       delete newList[index]
-            //     }
-            //   }
-            // })
-            // newList = newList.filter(Boolean) // Removes undefined elements from array
-            res.json({success: true, newList: newList})
-        })
-  // } else {
-  //   res.json({success: false, message:"Please login and try again"})
-  // }
+  Post.find((err, postList) =>{}).
+    populate('postCreator').
+      exec(function (err, postListWithUser) {
+        if (err) return handleError(err);
+        let newList = postListWithUser
+        
+        // Removes posts user allready voted for & and posts with post creator karma = 0 **
+          newList.map((post, index) => {
+            if (post.votes){
+              if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
+                delete newList[index]
+              }
+            }
+          })
+          newList = newList.filter(Boolean) // Removes undefined elements from array
+          res.json({success: true, newList: newList})
+      })
 })
 
 app.get("/vote/:postId/:imgVoted", authToken, function(req, res){
@@ -167,168 +168,134 @@ app.get("/vote/:postId/:imgVoted", authToken, function(req, res){
   const imgVoted = req.params.imgVoted
   let updatedVotes
 
-  // if(req.isAuthenticated()){
+  // Finds post creator and -1 hes karma
+  Post.findById(postId, (err, post) => {}).
+    populate('postCreator').
+    exec(function (err, postWithUser) {
+      if (err) return handleError(err);
 
-    // Finds post creator and -1 hes karma
-    Post.findById(postId, (err, post) => {}).
-      populate('postCreator').
-      exec(function (err, postWithUser) {
-        if (err) return handleError(err);
-
-        if(postWithUser.postCreator.karma !== 0){
-          User.findOneAndUpdate({_id: postWithUser.postCreator._id}, {karma: postWithUser.postCreator.karma - 1}, err => {
-            if (!err){
+      if(postWithUser.postCreator.karma !== 0){
+        User.findOneAndUpdate({_id: postWithUser.postCreator._id}, {karma: postWithUser.postCreator.karma - 1}, err => {
+          if (!err){
   
-              // Finds the post the user voted for and update it **
-              Post.findById(postId, (err, post) => {
-              try{
-                if (imgVoted==="image1"){
-                  updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
-                } else {
-                  updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
-                }  
-    
-                Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
-                  if(!err){
-                    res.send("ok")
-        
-                    // Updates the karma of the user voted **
-                    User.findOne({username: req.user.username}, (err, foundUser) => {
-                      if(!err && foundUser.karma < 30){
-                        User.findOneAndUpdate({username: req.user.username}, {karma: foundUser.karma + 1}, err => {
-                          if(err){
-                            console.log(err)
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              } catch(err) {res.send(err)}
-            })
-          }
-        })
-      }
-    });  
-  // } else {
-  //   res.send("Please log in and try again")
-  // }
+            // Finds the post the user voted for and update it **
+            Post.findById(postId, (err, post) => {
+            try{
+              if (imgVoted==="image1"){
+                updatedVotes = {image1: [...post.votes.image1, req.user.username], image2: [...post.votes.image2]}
+              } else {
+                updatedVotes = {image1: [...post.votes.image1], image2: [...post.votes.image2, req.user.username]}
+              }  
+              Post.findOneAndUpdate({_id: postId}, {votes: updatedVotes}, err =>{
+                if(!err){
+                  res.send("ok")
+      
+                  // Updates the karma of the user voted **
+                  User.findOne({username: req.user.username}, (err, foundUser) => {
+                    if(!err && foundUser.karma < 30){
+                      User.findOneAndUpdate({username: req.user.username}, {karma: foundUser.karma + 1}, err => {
+                        if(err){
+                          console.log(err)
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            } catch(err) {res.send(err)}
+          })
+        }
+      })
+    }
+  });  
 })
 
 app.get("/pause-toggle/:postId", authToken, function(req, res){
   const postId = req.params.postId
   let toggleUpdate
 
-  // if(req.isAuthenticated()){
-    User.findOne({username: req.user.username}).
-    populate('userPosts').
-    exec(function (err, userWithPosts) {
-      if (err) return handleError(err);
-
-      userWithPosts.userPosts.map(post => {
-        if(post._id == postId){
-
-          if (post.active===true){
-            toggleUpdate = false
-          } else {
-            toggleUpdate = true
-          }
-          Post.findOneAndUpdate({ _id: postId }, {active: toggleUpdate} ,err => {
-            if (!err){
-              res.send("active: " + toggleUpdate)
-            } else {
-              res.send(err)
-            }
-          })
+  User.findOne({username: req.user.username}).
+  populate('userPosts').
+  exec(function (err, userWithPosts) {
+    if (err) return handleError(err);
+    userWithPosts.userPosts.map(post => {
+      if(post._id == postId){
+        if (post.active===true){
+          toggleUpdate = false
+        } else {
+          toggleUpdate = true
         }
-      })
-    });
-  // }
+        Post.findOneAndUpdate({ _id: postId }, {active: toggleUpdate} ,err => {
+          if (!err){
+            res.send("active: " + toggleUpdate)
+          } else {
+            res.send(err)
+          }
+        })
+      }
+    })
+  });
 })
 
 app.get("/delete-post/:postId", authToken, function(req, res){
   const postId = req.params.postId
   
-  // if(req.isAuthenticated()){
-    User.findOne({username: req.user.username}).
-    populate('userPosts').
-    exec(function (err, userWithPosts) {
-      if (err) return handleError(err);
+  User.findOne({username: req.user.username}).
+  populate('userPosts').
+  exec(function (err, userWithPosts) {
+    if (err) return handleError(err);
 
-      userWithPosts.userPosts.map(post => {
-        if(post._id == postId){
-          Post.deleteOne({ _id: postId }, (err) => {
-            if (!err){
-              res.send("Post deleted")
-            } else {
-              res.send(err)
-            }
-          })
-        }
-      })
-    });
-  // }
+    userWithPosts.userPosts.map(post => {
+      if(post._id == postId){
+        Post.deleteOne({ _id: postId }, (err) => {
+          if (!err){
+            res.send("Post deleted")
+          } else {
+            res.send(err)
+          }
+        })
+      }
+    })
+  });
 })
 
 app.get("/get-karma", authToken, function(req, res){
-  // if(req.isAuthenticated()){
-    User.findOne({username: req.user.username}, (err, foundUser) => {
-      if(!err){
-        res.send({karma: foundUser.karma})
-      }
-    })
-  // }
+  User.findOne({username: req.user.username}, (err, foundUser) => {
+    if(!err){
+      res.send({karma: foundUser.karma})
+    }
+  })
 })
 
 app.get("/get-name", authToken, function(req, res){
-  // if(req.isAuthenticated()){
-    User.findOne({username: req.user.username}, (err, foundUser) => {
-      if(!err){
-        res.send(foundUser.name)
-      }
-    })
-  // }
+  User.findOne({username: req.user.username}, (err, foundUser) => {
+    if(!err){
+      res.send(foundUser.name)
+    }
+  })
 })
-
 
 app.get("/check-auth", authToken, function(req, res){
   res.json({success: true})
-  // if(req.isAuthenticated()){
-  //   res.send(true)
-  // } else {
-  //   res.send(false)
-  // }
 })
 
-app.get("/logout", function(req, res){
-  req.logout()
-  res.send("logout")
-})
 
 app.get("/get-results/:postId", authToken, function(req, res){
   const postId = req.params.postId
 
-  // if(req.isAuthenticated()){
-    Post.find({_id: postId}, (err, foundPost) => {
-      res.send(foundPost[0].votes)
-    })  
-  // } else {
-
-  // }
+  Post.find({_id: postId}, (err, foundPost) => {
+    res.send(foundPost[0].votes)
+  })  
 })
 
 app.get("/user-posts", authToken, function(req, res){
-  // if(req.isAuthenticated()){
-    User.
-    findOne({ username: req.user.username }).
-    populate('userPosts').
-    exec(function (err, userWithPosts) {
-      if (err) return handleError(err);
-      res.send(userWithPosts.userPosts)
-    });
-  // } else {
-  //   res.send("You are not logged in or server couldn't fetch data")
-  // }
+  User.
+  findOne({ username: req.user.username }).
+  populate('userPosts').
+  exec(function (err, userWithPosts) {
+    if (err) return handleError(err);
+    res.send(userWithPosts.userPosts)
+  });
 })
 
 app.get("/public/uploads/:picId", function(req, res){
@@ -338,63 +305,22 @@ app.get("/public/uploads/:picId", function(req, res){
 
 //------------------------------------POST ROUTS---------------------------------------
 
-app.post("/jwt", async function(req, res){
-  const { password, confirm, name, username } = req.body
-  if (!name || !password || !username) return res.json({success:false, message: "Required fields are missing"})
-  if (password !== confirm) return res.json({success:false, message: "Passwords not match"})
-
-  const emailExist = await User.findOne({username})
-  if (!emailExist)
-  res.send(emailExist)
-})
-
-function authToken(req, res, next){
-  const authHeader = req.headers["authorization"]
-  const token = authHeader && authHeader.split(" ")[1]
-  if(!token) return res.json({success: false, message:"Please login and try again"})
-
-  jwt.verify(token, tokenSecret, (err, user) => {
-    if (err) return res.json({success: false, message:"Please login and try again"})
-    if (!req.user) req.user = {}
-    req.user.username = user
-    next()
-  })
-}
-
 app.post("/register", function(req, res){
   const { password, confirm, name, username } = req.body
 
   if (!name) return res.json({success:false, message: "Please enter your name"})
+  if (password !== confirm) return res.json({success:false, message: "Passwords not match"})
 
-  if (password===confirm){
-    User.register({username: username}, password, function(err, user){
-      if (err){
+  User.register({username: username}, password, function(err, user){
+    if (err) return res.json({success: false, message: err.message}) 
 
-        // if (err.message==="No username was given"){
-        //   res.json({success: false, message: "Please enter a valid email"})
-        // } else if (err.message==="No password was given"){
-        //   res.json({success: false, message: "Please enter a password"})
-        // } else {
-        //   res.json({success: false, message: "Username allready exists"})
-        // }
-
-        res.json({success: false, message: err.message})
-
-      } else {
-        passport.authenticate("local")(req, res, function() {
-          const accessToken = jwt.sign(username, tokenSecret)
-
-          User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
-            if (!err){
-              res.header("authorization", accessToken).json({success: true, accessToken})
-            }
-          })
-        })
-      }
+    passport.authenticate("local")(req, res, function() {
+      const accessToken = jwt.sign(username, tokenSecret)
+      User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
+        if (!err) res.header("authorization", accessToken).json({success: true, accessToken})
+      })
     })
-  } else {
-    res.json({success: false, message: "Passwords does not match"})
-  }
+  })
 })
 
 app.post("/login", function(req, res){

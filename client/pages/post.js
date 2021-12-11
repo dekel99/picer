@@ -3,8 +3,8 @@ import ImageCropper from "../components/ImageCropper"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import DropMenu from '../components/DropMenu';
-// import axios from 'axios';
 import { useAxios } from '../hooks/useAxios';
+import axiosRegular from 'axios';
 // import heic2any from "heic2any"
 import {useRouter} from 'next/router'
 import Loading from '../components/Loading';
@@ -86,8 +86,9 @@ function post() {
         const data = new FormData() 
         data.append("file", image1)
         data.append("upload_preset", "hpuuk4oa")
+        const headers = {Authorization: ""}
 
-        axios.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data)
+        axiosRegular.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data, headers)
             .then(res => {
                 if(res.statusText==="OK"){
                     const urlImage1 = res.data.secure_url
@@ -95,19 +96,20 @@ function post() {
                     data.append("file", image2)
                     data.append("upload_preset", "hpuuk4oa")
 
-                    axios.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data)
+                    axiosRegular.post("https://api.cloudinary.com/v1_1/ddijwyj2m/image/upload", data)
                         .then(res => {
                             if(res.statusText==="OK"){
                                 const urlImage2 = res.data.secure_url
                                 const postData = {title, description, urlImage1, urlImage2}
-                        
                                 axios({method: "POST", url: process.env.NEXT_PUBLIC_SERVER_URL + "/post-upload", withCredentials: true , data: postData})
                                     .then(res=> {
                                         if (res.data==="ok"){
                                             setLoading(false)
-                                            router.push("/vote")
+                                            // router.push("/vote")
+                                            window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+
                                         } else {
-                                            throw Error (res.data)
+                                            throw Error (res.data.message)
                                         }
                                     }).catch(err => {
                                         setError(err.message)
