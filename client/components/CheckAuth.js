@@ -1,6 +1,8 @@
-import axios from "axios"
+// import axios from "axios"
+import { useAxios } from "../hooks/useAxios";
 
 export const CheckAuth = async () => {
+  const [axios] = useAxios()
   let response;
 
   try {
@@ -11,5 +13,5 @@ export const CheckAuth = async () => {
   }
 
   // if success return value
-  return response.data 
+  return response.data.success
 }

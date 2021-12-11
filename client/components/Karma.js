@@ -1,8 +1,10 @@
-import axios from 'axios'
+// import axios from 'axios'
+import { useAxios } from '../hooks/useAxios';
 import React, { useEffect, useState } from 'react'
 import styles from "../styles/Karma.module.css"
 
 function Karma(props) {
+    const [axios] = useAxios()
     const [karma, setKarma] = useState()
 
     useEffect(() => {

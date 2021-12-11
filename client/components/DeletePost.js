@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 import {useRouter} from 'next/router'
 import Loading from './Loading';
 import Portal from './Portal';
@@ -9,7 +10,7 @@ import styles from "../styles/deletePost.module.css"
 
 
 function DeletePost(props) {
-
+    const [axios] = useAxios()
     const [isDeleteWindow, setIsDeleteWindow] = useState(false)
     const [loading, setLoading] = useState(false)
     const { postId, loadMyPosts } = props

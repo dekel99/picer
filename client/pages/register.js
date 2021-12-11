@@ -3,12 +3,13 @@ import Head from 'next/head'
 import { Button } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import Link from "next/link"
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 import {useRouter} from 'next/router'
 import styles from "../styles/register.module.css"
 
 function register() {
-
+    const [axios] = useAxios()
     const [email, setEmail] = useState()
     const [name, setName] = useState()
     const [password, setPassword] = useState()
@@ -47,6 +48,7 @@ function register() {
             })
                 .then(res => {
                     if(res.data.success){
+                        localStorage.setItem("token", res.data.accessToken)
                         localStorage.setItem("showTutorial", true)
                         window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
                     } else {

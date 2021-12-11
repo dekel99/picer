@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import { TextField, Button } from '@material-ui/core';
 import Link from "next/link"
-import axios from "axios"
+// import axios from "axios"
 import styles from '../styles/login.module.css'
+import { useAxios } from '../hooks/useAxios';
 
 function login() {
-
+    const [axios] = useAxios()
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [loginErr, setLoginErr] = useState()
@@ -25,14 +26,15 @@ function login() {
             withCredentials: true,
             data: data
         }).then(res =>{ console.log(res)
-            if (res.data==="ok"){
+            if (res.data.success){
+                localStorage.setItem("token", res.data.accessToken)
                 window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
             } else {
                 setLoginErr(res.data)
             }
         }).catch(err => {console.log(err)})
     }
-
+    
     return (
         <div className={styles.pageContainer}>
             <Head>

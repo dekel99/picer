@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import axios from "axios"
+// import axios from "axios"
+import { useAxios } from '../hooks/useAxios';
 import PostCard from './PostCard'
 import LoadingSmall from "./LoadingSmall"
 
 function UserPosts() {
+    const [axios] = useAxios()
     const [loading, setLoading] = useState(false)
     const [userPosts, setUserPosts] = useState()
     const [reload, setReload] = useState(false)

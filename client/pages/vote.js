@@ -1,4 +1,5 @@
-import axios from 'axios'
+// import axios from 'axios'
+import { useAxios } from '../hooks/useAxios'
 import React, { useEffect, useState } from 'react'
 import PostCard from "../components/PostCard"
 import LoadingSmall from '../components/LoadingSmall'
@@ -11,7 +12,7 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Karma from '../components/Karma'
 
 function vote() {
-
+    const [axios] = useAxios()
     const [postList, setPostList] = useState()
     const [loading, setLoading] = useState(false)
     const [voteWinOpen, setVoteWinOpen] = useState(false)

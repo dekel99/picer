@@ -3,14 +3,15 @@ import ImageCropper from "../components/ImageCropper"
 import AddIcon from '@material-ui/icons/Add';
 import { TextField, Button } from '@material-ui/core';
 import DropMenu from '../components/DropMenu';
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 // import heic2any from "heic2any"
 import {useRouter} from 'next/router'
 import Loading from '../components/Loading';
 import styles from "../styles/post.module.css"
 
 function post() {
-
+    const [axios] = useAxios()
     const [title, setTitle] = useState("Overall best picture")
     const [description, setDescription] = useState()
     const [image1, setImage1] = useState()

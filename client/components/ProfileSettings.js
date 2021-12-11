@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import { TextField } from '@material-ui/core';
 import Link from "next/link"
 import { Button } from '@material-ui/core';
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 import styles from "../styles/profileSettings.module.css"
 
 function ProfileSettings(props) {
-
+    const [axios] = useAxios()
     const [newName, setNewName] = useState()
     const [currentPass, setCurrentPass] = useState()
     const [newPass, setNewPass] = useState()
@@ -17,12 +18,15 @@ function ProfileSettings(props) {
     const [nameChangeSuccess, setNameChangeSuccess] = useState()
 
     function logout(){
-        axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/logout", withCredentials: true})
-            .then(res => {
-                if (res.data==="logout"){
-                    window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
-                }
-            })
+        // axios({method: "GET", url: process.env.NEXT_PUBLIC_SERVER_URL + "/logout", withCredentials: true})
+        //     .then(res => {
+        //         if (res.data==="logout"){
+        //             window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+        //         }
+        //     })
+        localStorage.setItem("token", "")
+        window.location.replace(process.env.NEXT_PUBLIC_FRONT_URL)
+
     }
 
     function changeNameHandler(){

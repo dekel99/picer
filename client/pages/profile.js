@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import {CheckAuth} from "../components/CheckAuth"
 import ProfileMenu from "../components/ProfileMenu"
 import styles from "../styles/profile.module.css"
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 
 function profile() {
-
+    const [axios] = useAxios()
     const [name, setName] = useState()
 
     useEffect(() => {

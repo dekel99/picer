@@ -7,13 +7,16 @@ const passport = require("passport")
 const LocalStrategy = require("passport-local")
 const findOrCreate = require("mongoose-findorcreate")
 const passportLocalMongoose = require("passport-local-mongoose")
-const cors = require ("cors")
+const cors = require("cors")
+const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 const app = express();
 app.use(cors({ origin: process.env.REACT_APP_FRONT_URL, credentials: true})) // Enable getting requests from client
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
+
+const tokenSecret = process.env.ACCESS_TOKEN_SECRET
 
 const store = new MongoDBStore({
   uri: process.env.MONGO_URL,
@@ -134,8 +137,8 @@ app.get("/", function(req, res){
   res.send("this is respond")
 })
 
-app.get("/posts", function(req, res){
-  if(req.isAuthenticated()){
+app.get("/posts", authToken, function(req, res){
+  // if(req.isAuthenticated()){
 
     Post.find((err, postList) =>{}).
       populate('postCreator').
@@ -154,17 +157,17 @@ app.get("/posts", function(req, res){
             // newList = newList.filter(Boolean) // Removes undefined elements from array
             res.json({success: true, newList: newList})
         })
-  } else {
-    res.json({success: false, message:"Please login and try again"})
-  }
+  // } else {
+  //   res.json({success: false, message:"Please login and try again"})
+  // }
 })
 
-app.get("/vote/:postId/:imgVoted", function(req, res){
+app.get("/vote/:postId/:imgVoted", authToken, function(req, res){
   const postId = req.params.postId
   const imgVoted = req.params.imgVoted
   let updatedVotes
 
-  if(req.isAuthenticated()){
+  // if(req.isAuthenticated()){
 
     // Finds post creator and -1 hes karma
     Post.findById(postId, (err, post) => {}).
@@ -207,16 +210,16 @@ app.get("/vote/:postId/:imgVoted", function(req, res){
         })
       }
     });  
-  } else {
-    res.send("Please log in and try again")
-  }
+  // } else {
+  //   res.send("Please log in and try again")
+  // }
 })
 
-app.get("/pause-toggle/:postId", function(req, res){
+app.get("/pause-toggle/:postId", authToken, function(req, res){
   const postId = req.params.postId
   let toggleUpdate
 
-  if(req.isAuthenticated()){
+  // if(req.isAuthenticated()){
     User.findOne({username: req.user.username}).
     populate('userPosts').
     exec(function (err, userWithPosts) {
@@ -240,13 +243,13 @@ app.get("/pause-toggle/:postId", function(req, res){
         }
       })
     });
-  }
+  // }
 })
 
-app.get("/delete-post/:postId", function(req, res){
+app.get("/delete-post/:postId", authToken, function(req, res){
   const postId = req.params.postId
   
-  if(req.isAuthenticated()){
+  // if(req.isAuthenticated()){
     User.findOne({username: req.user.username}).
     populate('userPosts').
     exec(function (err, userWithPosts) {
@@ -264,36 +267,37 @@ app.get("/delete-post/:postId", function(req, res){
         }
       })
     });
-  }
+  // }
 })
 
-app.get("/get-karma", function(req, res){
-  if(req.isAuthenticated()){
+app.get("/get-karma", authToken, function(req, res){
+  // if(req.isAuthenticated()){
     User.findOne({username: req.user.username}, (err, foundUser) => {
       if(!err){
         res.send({karma: foundUser.karma})
       }
     })
-  }
+  // }
 })
 
-app.get("/get-name", function(req, res){
-  if(req.isAuthenticated()){
+app.get("/get-name", authToken, function(req, res){
+  // if(req.isAuthenticated()){
     User.findOne({username: req.user.username}, (err, foundUser) => {
       if(!err){
         res.send(foundUser.name)
       }
     })
-  }
+  // }
 })
 
 
-app.get("/check-auth", function(req, res){
-  if(req.isAuthenticated()){
-    res.send(true)
-  } else {
-    res.send(false)
-  }
+app.get("/check-auth", authToken, function(req, res){
+  res.json({success: true})
+  // if(req.isAuthenticated()){
+  //   res.send(true)
+  // } else {
+  //   res.send(false)
+  // }
 })
 
 app.get("/logout", function(req, res){
@@ -301,21 +305,20 @@ app.get("/logout", function(req, res){
   res.send("logout")
 })
 
-app.get("/get-results/:postId", function(req, res){
+app.get("/get-results/:postId", authToken, function(req, res){
   const postId = req.params.postId
 
-  if(req.isAuthenticated()){
+  // if(req.isAuthenticated()){
     Post.find({_id: postId}, (err, foundPost) => {
       res.send(foundPost[0].votes)
     })  
-  } else {
+  // } else {
 
-  }
+  // }
 })
 
-app.get("/user-posts", function(req, res){
-  
-  if(req.isAuthenticated()){
+app.get("/user-posts", authToken, function(req, res){
+  // if(req.isAuthenticated()){
     User.
     findOne({ username: req.user.username }).
     populate('userPosts').
@@ -323,10 +326,9 @@ app.get("/user-posts", function(req, res){
       if (err) return handleError(err);
       res.send(userWithPosts.userPosts)
     });
-  } 
-  else {
-    res.send("You are not logged in or server couldn't fetch data")
-  }
+  // } else {
+  //   res.send("You are not logged in or server couldn't fetch data")
+  // }
 })
 
 app.get("/public/uploads/:picId", function(req, res){
@@ -346,6 +348,19 @@ app.post("/jwt", async function(req, res){
   res.send(emailExist)
 })
 
+function authToken(req, res, next){
+  const authHeader = req.headers["authorization"]
+  const token = authHeader && authHeader.split(" ")[1]
+  if(!token) return res.json({success: false, message:"Please login and try again"})
+
+  jwt.verify(token, tokenSecret, (err, user) => {
+    if (err) return res.json({success: false, message:"Please login and try again"})
+    if (!req.user) req.user = {}
+    req.user.username = user
+    next()
+  })
+}
+
 app.post("/register", function(req, res){
   const { password, confirm, name, username } = req.body
 
@@ -354,19 +369,24 @@ app.post("/register", function(req, res){
   if (password===confirm){
     User.register({username: username}, password, function(err, user){
       if (err){
-        if (err.message==="No username was given"){
-          res.json({success: false, message: "Please enter a valid email"})
-        } else if (err.message==="No password was given"){
-          res.json({success: false, message: "Please enter a password"})
-        } else {
-          res.json({success: false, message: "Username allready exists"})
-        }
+
+        // if (err.message==="No username was given"){
+        //   res.json({success: false, message: "Please enter a valid email"})
+        // } else if (err.message==="No password was given"){
+        //   res.json({success: false, message: "Please enter a password"})
+        // } else {
+        //   res.json({success: false, message: "Username allready exists"})
+        // }
+
+        res.json({success: false, message: err.message})
 
       } else {
         passport.authenticate("local")(req, res, function() {
+          const accessToken = jwt.sign(username, tokenSecret)
+
           User.findOneAndUpdate({username: username}, {name: name, karma: 10}, err => { 
             if (!err){
-              res.json({success: true})
+              res.header("authorization", accessToken).json({success: true, accessToken})
             }
           })
         })
@@ -394,7 +414,10 @@ app.post("/login", function(req, res){
           res.send("Email or password is incorrect")
         } else {
           req.logIn(user, function() {
-            res.send("ok")
+            const accessToken = jwt.sign(username, tokenSecret)
+            res.header("authorization", accessToken).json({success: true, accessToken})
+
+            // res.send("ok")
           })
         }
       })
@@ -405,10 +428,10 @@ app.post("/login", function(req, res){
   })
 })
 
-app.post("/post-upload", upload.array("file"), function(req, res){
+app.post("/post-upload", authToken, function(req, res){
     // req.files, req.body.title, req.body.description
 
-    if(req.isAuthenticated()){
+    // if(req.isAuthenticated()){
       const time = new Date().toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit"
@@ -453,13 +476,13 @@ app.post("/post-upload", upload.array("file"), function(req, res){
           res.send("Required fields are empty")
         }
       })
-    } else {
-      res.send("Please login and try again")
-    }
+    // } else {
+    //   res.send("Please login and try again")
+    // }
 })
 
-app.post("/change-name", function(req, res){
-  if (req.isAuthenticated()){
+app.post("/change-name", authToken, function(req, res){
+  // if (req.isAuthenticated()){
     const newName = req.body.name
     if (!newName || newName.length<2) return res.json({success: false, message: "Name must be at least 2 characters"})
 
@@ -470,13 +493,13 @@ app.post("/change-name", function(req, res){
         res.json({success: false, message: "Error occured"})
       }
     })
-  } else {
-    res.json({success: false, message: "Please login and try again"})
-  }
+  // } else {
+  //   res.json({success: false, message: "Please login and try again"})
+  // }
 })
 
-app.post("/change-password", function(req, res){
-  if (req.isAuthenticated()){
+app.post("/change-password", authToken, function(req, res){
+  // if (req.isAuthenticated()){
     const {newPass, currentPass, confirmPass} = req.body
 
     if (newPass===confirmPass){
@@ -494,7 +517,7 @@ app.post("/change-password", function(req, res){
     } else {
       res.json({success: false, message: "Passwords does't match"})
     }
-  }
+  // }
 })
 
 //************************************************* */

@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
 import Loading from './Loading';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import styles from "../styles/voteButtons.module.css"
 
 function VoteButtons(props) {
+    const [axios] = useAxios()
     const [error, setError] = useState()
     const [loading, setLoading] = useState(false)
 

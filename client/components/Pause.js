@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import PauseIcon from '@material-ui/icons/Pause';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import styles from "../styles/Pause.module.css"
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from '../hooks/useAxios';
+
 
 function Pause(props) {
-
+    const [axios] = useAxios()
     const {active, postId} = props
     const [isActive, setIsActive] = useState(active)
 
