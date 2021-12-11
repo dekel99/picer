@@ -153,7 +153,7 @@ app.get("/posts", authToken, function(req, res){
         // Removes posts user allready voted for & and posts with post creator karma = 0 **
           newList.map((post, index) => {
             if (post.votes){
-              if(post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username) || post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id"
+              if(post.postCreator.karma === 0 || post.active===false ){ // for user could not see hes own posts add this "|| post.postCreator._id==req.user.id" // user wont see post he voted for: post.votes.image1.includes(req.user.username) || post.votes.image2.includes(req.user.username)
                 delete newList[index]
               }
             }
